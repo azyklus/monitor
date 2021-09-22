@@ -2,12 +2,12 @@ name: monitor
 version: 0.1.0
 
 authors:
-  - your-name-here <your-email-here>
+  - Yarot Kell <yarotkel@gmail.com>
 
 targets:
   monitor:
-    main: src/monitor.cr
+    main: src/main.cr
 
 crystal: 1.2.0-dev
 
-license: MIT
+license: BSD
