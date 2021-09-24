@@ -1,10 +1,15 @@
 # monitor
 
-TODO: Write a description here
+Monitor is a simple Discord bot that hangs out in the [Narwhals](https://discord.gg/GyXtwnBWne) server.
+The bot offers several chat games to play and many moderation functions to automatically perform
+administrative functions.
 
 ## Installation
 
-TODO: Write installation instructions here
+If you wish to run your own instance of Monitor, follow these instructions:
+- Clone this repository (`git clone https://github.com/mnimi/monitor.git`).
+- Build the bot (`shards build`).
+- Run the program (NOTE: You must supply your own token via command arguments or config file).
 
 ## Usage
 

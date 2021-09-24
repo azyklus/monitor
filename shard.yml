@@ -8,6 +8,10 @@ targets:
   monitor:
     main: src/main.cr
 
+dependencies:
+  discordcr:
+    github: shardlab/discordcr
+
 crystal: 1.2.0-dev
 
 license: BSD
