@@ -1,13 +1,12 @@
-require "./discord/config"
+require "./discord/app"
 
 # This module acts as a sort of "main" function.
+#
+# NOTE: Don't judge, I come from a C/Rust background, so this helps
+# the language make sense to me.
 module Monitor
-   # APP_VERSION denotes the program's version.
-   APP_VERSION       = "0.1.0"
+   # VERSION denotes the program's version.
+   VERSION = "0.1.0"
 
-   # DISCORD_CONFIG is an instance of the applications configuration
-   # as pertains to the Discord API. (API token, bot secret, Discord-specific behavior, et cetera).
-   DISCORD_CONFIG    = Monitor::DiscordConfig.new.load
-
-
+   Monitor::DISCORD.start
 end
