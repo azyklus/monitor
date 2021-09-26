@@ -3,3 +3,8 @@
 /bin/
 /.shards/
 *.dwarf
+
+
+# Added by cargo
+
+/target
