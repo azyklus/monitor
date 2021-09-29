@@ -5,7 +5,12 @@ pub use self::app::Bot;
 
 pub async fn setup() -> Result<Bot, GenericError>
 {
-   Ok(Bot{})
+   let mut bot: Bot = Bot::new().await.unwrap();
+   if let Err(e) = bot.run().await {
+      return Err(e.into());
+   }
+
+   return Ok(bot);
 }
 
 
