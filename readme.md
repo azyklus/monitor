@@ -1,6 +1,6 @@
-# monitor
+# The Monitor
 
-Monitor is a simple Discord bot that hangs out in the [Narwhals](https://discord.gg/GyXtwnBWne) server.
+The Monitor is a simple Discord bot that hangs out in the [Narwhals](https://discord.gg/GyXtwnBWne) server.
 The bot offers several chat games to play and many moderation functions to automatically perform
 administrative functions.
 
@@ -8,7 +8,7 @@ administrative functions.
 
 If you wish to run your own instance of Monitor, follow these instructions:
 - Clone this repository (`git clone https://github.com/mnimi/monitor.git`).
-- Build the bot (`shards build`).
+- Build the bot (`cargo build`).
 - Run the program (NOTE: You must supply your own token via command arguments or config file).
 
 ## Usage
@@ -29,4 +29,6 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [your-name-here](https://github.com/your-github-user) - creator and maintainer
+- [Yarot Kell](https://twitter.com/yarotk) - creator and maintainer
+- [ShockEMP](https://twitter.com/_shockemp) - contributor
+- [Dwellr](https://twitter.com/dwellr4) - contributor
