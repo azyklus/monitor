@@ -29,13 +29,16 @@ pub async fn setup() -> Result<Bot, GenericError>
       return Err(e.into());
    }
 
+   // Setup the Discord bot itself.
    let mut bot: Bot = Bot::new().await.unwrap();
    if let Err(e) = bot.run().await {
       eprintln!("An error occurred while running the Discord bot!");
 
+      // an error occurred while attempting to run the bot.
       return Err(e.into());
    }
 
+   // all is okay!
    return Ok(bot);
 }
 
