@@ -7,4 +7,22 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.44"
 tokio = { version = "1.11.0", features = ["full"] }
+
+[dependencies.serenity]
+default-features = false
+features = [
+   "builder",
+   "client",
+   "collector",
+   "framework",
+   "gateway",
+   "http",
+   "model",
+   "standard_framework",
+   "utils",
+   "voice",
+   "rustls_backend",
+]
+version = "0.10"
