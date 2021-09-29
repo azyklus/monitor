@@ -4,6 +4,13 @@
 /.shards/
 *.dwarf
 
+/**/*.rs
+/**/*.md
+/**/*.log
+/**/*.lock
+/**/*.toml
+
+/.vscode
 
 # Added by cargo
 
