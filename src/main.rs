@@ -6,7 +6,7 @@
 //! [these instructions].
 //!
 //! [Narwhals]: https://discord.gg/GyXtwnBWne
-//! [here]: https://discord.com/api/oauth2/authorize?client_id=817894435299262516&permissions=8
+//! [here]: https://discord.com/api/oauth2/authorize?client_id=817894435299262516&permissions=8&redirect_uri=https%3A%2F%2Fdiscord.com%2Fapi%2Foauth2%2Fauthorize%3Fclient_id%3D817894435299262516%26scope%3Dapplications.commands&scope=bot
 //! [these instructions]: https://github.com/mnimi/monitor/#installation
 
 #![crate_name = "monitor"]
@@ -32,7 +32,7 @@ use tokio::runtime;
 // MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// The maximum number of threads allowed to be running simultaneously.
-pub const MAX_THREADS: u32 = 3;
+pub const MAX_THREADS: usize = 3;
 
 #[doc(hidden)]
 #[tokio::main]
@@ -53,8 +53,12 @@ async fn main() -> Result<(), GenericError>
 
    if children.len() > MAX_THREADS {
       return Err(OOBError.into());
-   } else {
+   }
+
+   if children.len() <= MAX_THREADS - 2 {
       children.push(child1);
+   } else if children.len() == MAX_THREADS - 2 {
+   } else if children.len() == MAX_THREADS - 1 {
    }
 
    for child in children {
@@ -81,10 +85,16 @@ pub mod errors;
 // CRATE DEPENDENCIES ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 extern crate anyhow;
+extern crate chrono;
+extern crate fern;
 extern crate lazy_static;
 extern crate serde;
-#[macro_use]
-extern crate serde_derive;
 extern crate serenity;
 extern crate tokio;
 extern crate toml;
+
+#[macro_use]
+extern crate log;
+
+#[macro_use]
+extern crate serde_derive;

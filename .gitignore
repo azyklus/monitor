@@ -8,5 +8,6 @@
 # Added by cargo
 
 /target
+/discord.log
 /discord.toml
 /poker.toml
