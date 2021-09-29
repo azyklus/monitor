@@ -1,8 +1,7 @@
 # The Monitor
 
 The Monitor is a simple Discord bot that hangs out in the [Narwhals](https://discord.gg/GyXtwnBWne) server.
-The bot offers several chat games to play and many moderation functions to automatically perform
-administrative functions.
+The bot offers several chat games to play and many tools to automatically perform administrative functions.
 
 ## Installation
 

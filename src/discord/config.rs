@@ -1,3 +1,5 @@
+use crate::errors::{FileError, GenericError};
+
 use anyhow::Result;
 
 use std::{
@@ -75,22 +77,31 @@ impl Default for DiscordConfig
 /// [`DiscordConfig::PATH`]: crate::discord::config::DiscordConfig::PATH
 pub fn save(conf: &DiscordConfig) -> Result<()>
 {
+   // Assign the location of our Discord config to a Path variable.
    let fp: &Path = Path::new(DiscordConfig::PATH);
+   // Serialize our config into a String.
    let toml: String = ser::to_string(conf).unwrap();
 
    // Check whether the file we need to write to exists.
-   if let Err(e) = fs::metadata(fp) {
-      // The file does not exist; return an error.
-      return Err(e.into());
+   if let Ok(false) = fs::try_exists(fp) {
+      // It does not, so we must create it.
+
+      // Create the file, as it does not exist, erroring if
+      // there is a problem doing so.
+      let mut fi: File = File::create(fp)
+         .expect("couldn't create the file");
+
+      // Write our TOML to the config file.
+      if let Err(e) = fi.write_all(toml.as_bytes()) {
+         // Return an error if we run into a problem while we're
+         // writing to the file.
+         return Err(e.into());
+      }
+   } else {
+      return Err(FileError::Exists.into());
    }
 
-   let mut fi: File = File::create(fp)
-      .expect("couldn't create the file");
-
-   if let Err(e) = fi.write_all(toml.as_bytes()) {
-      return Err(e.into());
-   }
-
+   // Return "Ok".
    return Ok(());
 }
 
@@ -112,7 +123,46 @@ pub fn save(conf: &DiscordConfig) -> Result<()>
 ///
 /// [`DiscordConfig::PATH`]: crate::discord::config::DiscordConfig::PATH
 /// [`DiscordConfig`]: crate::discord::config::DiscordConfig
-pub fn load(conf: &mut DiscordConfig) -> Result<()>
+pub fn load(mut conf: DiscordConfig) -> Result<DiscordConfig>
 {
-   return Ok(());
+   // Assign the Discord config path to a variable.
+   let fp: &Path = Path::new(DiscordConfig::PATH);
+   // Create an empty string to house our TOML.
+   let mut toml: String = String::new();
+
+   // Check whether the config file already exists.
+   if let Ok(false) = fs::try_exists(fp) {
+      eprintln!("File does not exist...");
+      eprintln!("Creating it now.");
+
+      // It does not, so we create it...
+      self::save(&conf)?;
+      // ...and return an error.
+      return Err(FileError::Nonexistent.into());
+   } else {
+      // It exists, so we open the file, erroring if
+      // there is an issue.
+      let mut fi: Result<File, GenericError> = match File::open(fp) {
+         Ok(file) => Ok(file),
+         Err(e) => {
+            self::save(&conf)?;
+
+            Err(e.into())
+         },
+      };
+
+      // Read from the config file into the TOML variable.
+      fi
+         .unwrap()
+         .read_to_string(&mut toml)
+         .expect("error reading file");
+   }
+
+   // Deserialize the TOML, erroring if there is
+   // an issue.
+   conf = de::from_str(toml.as_str())
+      .expect("error deserializing toml");
+
+   // Return our config.
+   return Ok(conf);
 }

@@ -1,34 +1,72 @@
-use std::{
-   error::Error,
-   io,
-   thread,
-   time::Duration,
+//! The Monitor is a simple Discord bot that hangs out in the [Narwhals] server.
+//! The bot offers several chat games as well as tools to automatically perform certain
+//! administrative tasks in order to better keep the server organized.
+//!
+//! You can add the bot to your own server [here], or you can build your own by following
+//! [these instructions].
+//!
+//! [Narwhals]: https://discord.gg/GyXtwnBWne
+//! [here]: https://discord.com/api/oauth2/authorize?client_id=817894435299262516&permissions=8
+//! [these instructions]: https://github.com/mnimi/monitor/#installation
+
+#![crate_name = "monitor"]
+#![crate_type = "bin"]
+#![deny(clippy::all)]
+#![warn(missing_docs)]
+#![allow(unused)]
+#![allow(dead_code)]
+#![feature(path_try_exists)]
+
+use self::{
+   discord::Bot,
+   errors::{GenericError, OOBError},
 };
 
-/// A generic error type that *should* be able to be used with
-/// most custom error implementations.
-pub type GenericError = Box<dyn Error + Send + Sync>;
+use std::{
+   error::Error,
+   thread::{self, JoinHandle},
+};
 
+use tokio::runtime;
+
+// MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// The maximum number of threads allowed to be running simultaneously.
+pub const MAX_THREADS: u32 = 3;
+
+#[doc(hidden)]
 #[tokio::main]
 async fn main() -> Result<(), GenericError>
 {
-   let _d = || async move {
-      if let Err(why) = discord::setup().await {
-         return Err(why);
-      } else {
-         return Ok(());
-      }
-   };
+   let mut children = vec![];
+   let mut discord: Bot = discord::setup().await?;
 
-   thread::spawn(_d);
+   let child1: JoinHandle<_> = thread::spawn(move || {
+      runtime::Builder::new_multi_thread()
+         .enable_all()
+         .build()
+         .unwrap()
+         .block_on(async {
+            let _ = discord.run().await;
+         });
+   });
+
+   if children.len() > MAX_THREADS {
+      return Err(OOBError.into());
+   } else {
+      children.push(child1);
+   }
+
+   for child in children {
+      let _ = child.join();
+   }
 
    return Ok(());
 }
 
-
 // CRATE MODULES ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// Contains bot commands called on Discord or through Matrix.
+/// Contains bot commands called on Discord or Matrix.
 ///
 /// Commands are prefixed with `mntr` and can be enumerated via
 /// the `mntr help` command.
@@ -37,12 +75,16 @@ pub mod commands;
 /// Contains the main logic relating to the Discord bot.
 pub mod discord;
 
+/// Contains error types.
+pub mod errors;
 
 // CRATE DEPENDENCIES ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#[macro_use] extern crate anyhow;
-#[macro_use] extern crate serde;
-#[macro_use] extern crate serde_derive;
-#[macro_use] extern crate serenity;
-#[macro_use] extern crate tokio;
+extern crate anyhow;
+extern crate lazy_static;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serenity;
+extern crate tokio;
 extern crate toml;

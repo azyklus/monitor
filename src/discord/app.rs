@@ -35,9 +35,7 @@ impl Bot
          .group(&commands::GENERAL_GROUP);
 
       let mut conf: DiscordConfig = DiscordConfig::default();
-      if let Err(e) = config::load(&mut conf) {
-         return Err(e.into());
-      }
+      conf = config::load(conf)?;
 
       let mut client: Client = Client::builder((&conf).token())
          .event_handler(Handler)
