@@ -1,10 +1,18 @@
 use anyhow::Result;
 
 use serenity::{
-   client::{Client},
+   client::{
+      Client,
+      bridge::gateway::{
+         GatewayIntents,
+         ShardId,
+         ShardManager,
+      },
+   },
    framework::standard::{
       StandardFramework,
-   }
+   },
+   prelude::*,
 };
 
 use std::{
@@ -13,8 +21,25 @@ use std::{
    io,
 };
 
+use tokio::sync::Mutex;
+
 use crate::commands::{self, Handler};
 use super::config::{self, DiscordConfig};
+
+/// A container type is created for inserting into our [`Client`]'s data,
+/// which allows for data to be accessible across all events and framework commands,
+/// or anywhere else that has a copy of the data [`Arc`].
+///
+/// [`Client`]: serenity::client::Client
+/// [`Arc`]: std::sync::Arc
+pub struct ShardManagerContainer;
+
+impl TypeMapKey for ShardManagerContainer
+{
+   type Value = Arc<Mutex<ShardManagerContainer>>;
+}
+
+
 
 /// Contains the main loop for the Discord bot.
 pub struct Bot

@@ -1,5 +1,6 @@
-use crate::errors::GenericError;
 pub use self::app::Bot;
+
+use crate::errors::GenericError;
 
 use chrono::Local;
 use fern::Dispatch;
