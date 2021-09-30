@@ -53,9 +53,7 @@ async fn main() -> Result<(), GenericError>
 
    if children.len() > MAX_THREADS {
       return Err(OOBError.into());
-   }
-
-   if children.len() <= MAX_THREADS - 2 {
+   } else if children.len() <= MAX_THREADS - 2 {
       children.push(child1);
    } else if children.len() == MAX_THREADS - 2 {
    } else if children.len() == MAX_THREADS - 1 {
