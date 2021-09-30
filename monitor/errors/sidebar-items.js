@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["FileError","Error occurs in the case of a non-existent file."]],"struct":[["OOBError","Length out-of-bounds error."],["ThreadJoinError","Error occurred while joining threads."],["UnknownError","An unknown error."]],"type":[["GenericError","A generic error type that should be able to be used with most custom error implementations."]]});

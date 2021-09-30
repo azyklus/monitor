@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["CollectorError","An error that occured while working with a collector."]],"mod":[["event_collector",""],["message_collector",""],["reaction_collector",""]]});

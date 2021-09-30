@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["monitor"] = [{"text":"impl <a class=\"trait\" href=\"serenity/client/event_handler/trait.EventHandler.html\" title=\"trait serenity::client::event_handler::EventHandler\">EventHandler</a> for <a class=\"struct\" href=\"monitor/commands/struct.Handler.html\" title=\"struct monitor::commands::Handler\">Handler</a>","synthetic":false,"types":["monitor::commands::Handler"]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

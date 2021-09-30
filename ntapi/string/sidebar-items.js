@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["UTF16Const","A wrapper over UTF16 string constants."],["UTF8Const","A wrapper over UTF8 string constants."]]});

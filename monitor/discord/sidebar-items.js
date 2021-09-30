@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["setup","Sets up the Discord bot."],["setup_logging","Set up logging functionality for the Monitor application."]],"mod":[["app","Contains the main bot loop."],["config","Discord API configs."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Stream","A stream of bytes and characters."]]});
