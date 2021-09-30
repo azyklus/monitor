@@ -17,10 +17,7 @@
 #![allow(dead_code)]
 #![feature(path_try_exists)]
 
-use self::{
-   discord::Bot,
-   errors::{GenericError, OOBError},
-};
+use self::errors::{GenericError, OOBError};
 
 use std::{
    error::Error,
@@ -39,7 +36,7 @@ pub const MAX_THREADS: usize = 3;
 async fn main() -> Result<(), GenericError>
 {
    let mut children = vec![];
-   let mut discord: Bot = discord::setup().await?;
+   let mut dis: discord::Bot = discord::setup().await?;
 
    let child1: JoinHandle<_> = thread::spawn(move || {
       runtime::Builder::new_multi_thread()
@@ -47,7 +44,7 @@ async fn main() -> Result<(), GenericError>
          .build()
          .unwrap()
          .block_on(async {
-            let _ = discord.run().await;
+            let _ = dis.run().await;
          });
    });
 

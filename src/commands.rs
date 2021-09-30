@@ -28,4 +28,5 @@ impl TypeMapKey for CommandCounter
 
 /// General-use commands.
 pub mod general;
+pub use general::MY_HELP;
 pub use general::GENERAL_GROUP;
