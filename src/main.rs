@@ -1,14 +1,3 @@
-//! The Monitor is a simple Discord bot that hangs out in the [Narwhals] server.
-//! The bot offers several chat games as well as tools to automatically perform certain
-//! administrative tasks in order to better keep the server organized.
-//!
-//! You can add the bot to your own server [here], or you can build your own by following
-//! [these instructions].
-//!
-//! [Narwhals]: https://discord.gg/GyXtwnBWne
-//! [here]: https://discord.com/api/oauth2/authorize?client_id=817894435299262516&permissions=8&redirect_uri=https%3A%2F%2Fdiscord.com%2Fapi%2Foauth2%2Fauthorize%3Fclient_id%3D817894435299262516%26scope%3Dapplications.commands&scope=bot
-//! [these instructions]: https://github.com/mnimi/monitor/#installation
-
 #![crate_name = "monitor"]
 #![crate_type = "bin"]
 #![deny(clippy::all)]
@@ -17,14 +6,18 @@
 #![allow(dead_code)]
 #![feature(path_try_exists)]
 
+pub use self::{
+   commands::CommandCounter,
+   discord::app::ShardManagerContainer,
+};
+
 use self::errors::{GenericError, OOBError};
 
 use std::{
    error::Error,
-   thread::{self, JoinHandle},
 };
 
-use tokio::runtime;
+use tokio::task::JoinHandle;
 
 // MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,29 +28,23 @@ pub const MAX_THREADS: usize = 3;
 #[tokio::main]
 async fn main() -> Result<(), GenericError>
 {
-   let mut children = vec![];
+   let mut childs = vec![];
    let mut dis: discord::Bot = discord::setup().await?;
 
-   let child1: JoinHandle<_> = thread::spawn(move || {
-      runtime::Builder::new_multi_thread()
-         .enable_all()
-         .build()
-         .unwrap()
-         .block_on(async {
-            let _ = dis.run().await;
-         });
+   let child1: JoinHandle<_> = tokio::spawn(async move {
+      dis.run().await;
    });
 
-   if children.len() > MAX_THREADS {
-      return Err(OOBError.into());
-   } else if children.len() <= MAX_THREADS - 2 {
-      children.push(child1);
-   } else if children.len() == MAX_THREADS - 2 {
-   } else if children.len() == MAX_THREADS - 1 {
+   match childs.len() {
+      MAX_THREADS => return Err(OOBError.into()),
+      0 => childs.push(child1),
+      1 => {},
+      2 => {},
+      _ => return Err(OOBError.into()),
    }
 
-   for child in children {
-      let _ = child.join();
+   for child in childs {
+      let _ = child.await?;
    }
 
    return Ok(());

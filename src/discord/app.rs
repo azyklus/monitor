@@ -94,7 +94,8 @@ impl Bot
          .normal_message(hooks::normal)
          .on_dispatch_error(hooks::dispatch_error)
          .help(&commands::MY_HELP)
-         .group(&commands::GENERAL_GROUP);
+         .group(&commands::GENERAL_GROUP)
+         .group(&commands::OWNER_GROUP);
 
       let mut client: Client = Client::builder((&conf).token())
          .event_handler(Handler)
@@ -105,7 +106,7 @@ impl Bot
          // use it.
          // You will need to enable these 2 options on the bot application, and possibly wait up to 5
          // minutes.
-         .intents(GatewayIntents::non_privileged())
+         .intents(GatewayIntents::all())
          .await
          .expect("Error creating client");
 

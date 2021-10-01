@@ -5,9 +5,11 @@ The bot offers several chat games to play and many tools to automatically perfor
 
 ## Installation
 
+*NOTE: please install `cargo-make` to build this project.*
+
 If you wish to run your own instance of Monitor, follow these instructions:
 - Clone this repository (`git clone https://github.com/mnimi/monitor.git`).
-- Build the bot (`cargo build`).
+- Build the bot (`makers build`).
 - Run the program (NOTE: You must supply your own token via command arguments or config file).
 
 ## Usage

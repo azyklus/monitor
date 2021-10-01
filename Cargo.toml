@@ -8,6 +8,14 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[[bin]]
+name = "monitor"
+path = "src/main.rs"
+
+[lib]
+name = "monitor"
+path = "src/lib.rs"
+
 [dependencies]
 anyhow = "1.0.44"
 tokio = { version = "1.12.0", features = ["full"] }

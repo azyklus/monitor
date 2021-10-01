@@ -1,4 +1,4 @@
-[tasks.format]
+[tasks.fmt]
 install_crate = "rustfmt"
 command = "cargo"
 args = ["fmt", "--", "--emit-files"]
@@ -9,7 +9,12 @@ args = ["clean"]
 
 [tasks.build]
 command = "cargo"
-args = ["build", "--verbose"]
+args = [
+   "build", 
+   "-Z", 
+   "unstable-options", 
+   "--verbose"
+]
 dependencies = ["clean"]
 
 [tasks.test]

@@ -1,7 +1,12 @@
+use crate::ShardManagerContainer;
+
 use std::collections::HashSet;
 
 use serenity::{
-   client::Context,
+   client::{
+      Context,
+      bridge::gateway::ShardId,
+   },
    framework::standard::{
       Args,
       CommandGroup,
@@ -24,13 +29,35 @@ use serenity::{
 #[commands(ping)]
 pub struct General;
 
-/// Replies with "Pong!"
-///
-/// Mostly just a test command.
+/// Shows the latency of the bot (in milliseconds).
 #[command]
+#[aliases("latency", "pong")]
 pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult
 {
-   msg.reply(ctx, "Pong!").await?;
+   let data = ctx.data.read().await;
+
+   let smgr = match data.get::<ShardManagerContainer>() {
+      Some(v) => v,
+      None => {
+         msg.reply(ctx, "There was a problem getting the shard manager container.").await?;
+
+         return Ok(());
+      }
+   };
+
+   let mgr = smgr.lock().await;
+   let rnnrs = mgr.runners.lock().await;
+
+   let rnnr = match rnnrs.get(&ShardId(ctx.shard_id)) {
+      Some(rnnr) => rnnr,
+      None => {
+         msg.reply(ctx, "No shard found!").await?;
+
+         return Ok(());
+      }
+   };
+
+   msg.reply(ctx, &format!("The shard's latency is {:?}", rnnr.latency.unwrap())).await?;
 
    return Ok(());
 }
