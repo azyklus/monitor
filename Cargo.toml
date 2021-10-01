@@ -13,7 +13,7 @@ name = "monitor"
 path = "src/main.rs"
 
 [lib]
-name = "monitor"
+name = "automan"
 path = "src/lib.rs"
 
 [dependencies]

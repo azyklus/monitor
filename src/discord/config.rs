@@ -1,4 +1,4 @@
-use crate::errors::{FileError, GenericError};
+use automan::errors::{FileError, GenericError};
 
 use anyhow::Result;
 

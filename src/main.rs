@@ -11,7 +11,7 @@ pub use self::{
    discord::app::ShardManagerContainer,
 };
 
-use self::errors::{GenericError, OOBError};
+use automan::errors::{GenericError, OOBError};
 
 use std::{
    error::Error,
@@ -61,15 +61,13 @@ pub mod commands;
 /// Contains the main logic relating to the Discord bot.
 pub mod discord;
 
-/// Contains error types.
-pub mod errors;
-
 /// Contains the Matrix bot.
 pub mod matrix;
 
 // CRATE DEPENDENCIES ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 extern crate anyhow;
+extern crate automan;
 extern crate chrono;
 extern crate fern;
 extern crate lazy_static;

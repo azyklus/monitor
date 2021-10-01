@@ -15,3 +15,6 @@
 /// will eventually supplant the "official" Matrix API crate
 /// in our project.
 pub mod __matrix;
+
+/// Contains error types.
+pub mod errors;

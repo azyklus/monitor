@@ -63,7 +63,7 @@ pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult
 }
 
 /// The Serenity framework provides us with two built-in help commands,
-/// but we can use a custom help command that forwards the behaviour to
+/// but we use a custom help command that forwards the behaviour to
 /// either of them.
 ///
 /// We apply several attributes to this function, as listed here:
