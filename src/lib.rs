@@ -18,3 +18,6 @@ pub mod __matrix;
 
 /// Contains error types.
 pub mod errors;
+
+/// Contains light implementations of various chat games.
+pub mod games;
