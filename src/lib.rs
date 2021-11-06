@@ -1,3 +1,12 @@
+#![crate_name="automan"]
+#![crate_type="lib"]
+#![deny(clippy::all)]
+#![warn(missing_docs)]
+#![allow(unused)]
+#![allow(clippy::needless_return)]
+#![allow(dead_code)]
+#![feature(path_try_exists)]
+
 //! The Monitor is a simple Discord bot that hangs out in the [Narwhals] server.
 //! The bot offers several chat games as well as tools to automatically perform certain
 //! administrative tasks in order to better keep the server organized.

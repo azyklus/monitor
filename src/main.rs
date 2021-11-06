@@ -1,8 +1,8 @@
 #![crate_name = "monitor"]
 #![crate_type = "bin"]
 #![deny(clippy::all)]
-#![warn(missing_docs)]
 #![allow(unused)]
+#![allow(clippy::needless_return)]
 #![allow(dead_code)]
 #![feature(path_try_exists)]
 

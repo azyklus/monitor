@@ -1,35 +1,3 @@
-use anyhow::Result;
-
-use crate::commands::CommandCounter;
-
-use serenity::{
-   client::{
-      Client,
-      bridge::gateway::{
-         GatewayIntents,
-         ShardId,
-         ShardManager,
-      },
-   },
-   framework::standard::{
-      StandardFramework,
-   },
-   http::Http,
-   prelude::*,
-};
-
-use std::{
-   cell::RefCell,
-   collections::{HashMap, HashSet},
-   sync::Arc,
-   io,
-};
-
-use tokio::sync::Mutex;
-
-use crate::commands::{self, Handler};
-use super::config::{self, DiscordConfig};
-
 /// A container type is created for inserting into our [`Client`]'s data,
 /// which allows for data to be accessible across all events and framework commands,
 /// or anywhere else that has a copy of the data [`Arc`].
@@ -55,12 +23,13 @@ pub struct Bot
 impl Bot
 {
    /// Creates a new instance of the bot.
+   #[allow(clippy::needless_return)]
    pub async fn new() -> Result<Bot>
    {
-      let mut conf: DiscordConfig = DiscordConfig::default();
-      conf = config::load(conf)?;
+      let mut config: DiscordConfig = DiscordConfig::default();
+      config = config::load(config)?;
 
-      let http = Http::new_with_token((&conf).token().as_str());
+      let http = Http::new_with_token((&config).token().as_str());
 
       let (owners, bot_id) = match http.get_current_application_info().await {
          Ok(ini) => {
@@ -97,7 +66,7 @@ impl Bot
          .group(&commands::GENERAL_GROUP)
          .group(&commands::OWNER_GROUP);
 
-      let mut client: Client = Client::builder((&conf).token())
+      let mut client: Client = Client::builder((&config).token())
          .event_handler(Handler)
          .framework(fw)
          // For this to run properly, the "Presence Intent" and "Server Members Intent" 
@@ -111,8 +80,8 @@ impl Bot
          .expect("Error creating client");
 
       return Ok(Bot{
-         config: conf,
-         client: client,
+         config,
+         client,
       });
    }
 
@@ -121,6 +90,7 @@ impl Bot
    pub fn config(&self) -> Arc<DiscordConfig> { Arc::new(self.config.clone()) }
 
    /// Runs the Discord bot.
+   #[allow(clippy::needless_return)]
    pub async fn run(&mut self) -> Result<()>
    {
       {
@@ -136,6 +106,38 @@ impl Bot
       return Ok(());
    }
 }
+
+use anyhow::Result;
+
+use crate::commands::CommandCounter;
+
+use serenity::{
+   client::{
+      Client,
+      bridge::gateway::{
+         GatewayIntents,
+         ShardId,
+         ShardManager,
+      },
+   },
+   framework::standard::{
+      StandardFramework,
+   },
+   http::Http,
+   prelude::*,
+};
+
+use std::{
+   cell::RefCell,
+   collections::{HashMap, HashSet},
+   sync::Arc,
+   io,
+};
+
+use tokio::sync::Mutex;
+
+use crate::commands::{self, Handler};
+use super::config::{self, DiscordConfig};
 
 #[doc(hidden)]
 pub mod hooks;

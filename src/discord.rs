@@ -1,17 +1,11 @@
 pub use self::app::Bot;
 
-use automan::errors::GenericError;
-
-use chrono::Local;
-use fern::Dispatch;
-use log::LevelFilter;
-
 /// Sets up the Discord bot.
 ///
 ///
 /// # Examples
 ///
-/// ```
+/// ```should_fail
 /// use crate::discord;
 ///
 /// fn main()
@@ -69,3 +63,9 @@ pub mod app;
 
 /// Discord API configs.
 pub mod config;
+
+use automan::errors::GenericError;
+
+use chrono::Local;
+use fern::Dispatch;
+use log::LevelFilter;

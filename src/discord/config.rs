@@ -1,18 +1,3 @@
-use automan::errors::{FileError, GenericError};
-
-use anyhow::Result;
-
-use std::{
-   fs::{self, File},
-   io::prelude::*,
-   path::Path,
-};
-
-use toml::{
-   ser,
-   de,
-};
-
 /// Contains configuration values used to interface with Discord.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DiscordConfig
@@ -64,7 +49,7 @@ impl Default for DiscordConfig
 ///
 /// # Examples
 ///
-/// ```
+/// ```should_fail
 /// use crate::discord::config::{self, DiscordConfig};
 ///
 /// fn main()
@@ -111,7 +96,7 @@ pub fn save(conf: &DiscordConfig) -> Result<()>
 ///
 /// # Examples
 ///
-/// ```
+/// ```should_fail
 /// use crate::discord::config::{self, DiscordConfig};
 ///
 /// fn main()
@@ -166,3 +151,18 @@ pub fn load(mut conf: DiscordConfig) -> Result<DiscordConfig>
    // Return our config.
    return Ok(conf);
 }
+
+use automan::errors::{FileError, GenericError};
+
+use anyhow::Result;
+
+use std::{
+   fs::{self, File},
+   io::prelude::*,
+   path::Path,
+};
+
+use toml::{
+   ser,
+   de,
+};
