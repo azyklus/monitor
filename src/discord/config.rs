@@ -55,17 +55,17 @@ impl Default for DiscordConfig
 /// fn main()
 /// {
 ///    let conf: DiscordConfig = DiscordConfig::with_values(...);
-///    config::save(&conf).unwrap();
+///    config::save(conf).unwrap();
 /// }
 /// ```
 ///
 /// [`DiscordConfig::PATH`]: crate::discord::config::DiscordConfig::PATH
-pub fn save(conf: &DiscordConfig) -> Result<()>
+pub fn save(conf: DiscordConfig) -> Result<()>
 {
    // Assign the location of our Discord config to a Path variable.
    let fp: &Path = Path::new(DiscordConfig::PATH);
    // Serialize our config into a String.
-   let toml: String = ser::to_string(conf).unwrap();
+   let toml: String = ser::to_string(&conf).unwrap();
 
    // Check whether the file we need to write to exists.
    if let Ok(false) = fs::try_exists(fp) {
@@ -102,7 +102,7 @@ pub fn save(conf: &DiscordConfig) -> Result<()>
 /// fn main()
 /// {
 ///    let mut conf: DiscordConfig = DiscordConfig::new();
-///    let _ = config::load(&mut DiscordConfig).unwrap();
+///    let _ = config::load(conf).unwrap();
 /// }
 /// ```
 ///
@@ -117,11 +117,11 @@ pub fn load(mut conf: DiscordConfig) -> Result<DiscordConfig>
 
    // Check whether the config file already exists.
    if let Ok(false) = fs::try_exists(fp) {
-      eprintln!("File does not exist...");
-      eprintln!("Creating it now.");
+      log::error!("File does not exist...");
+      log::error!("Creating it now.");
 
       // It does not, so we create it...
-      self::save(&conf)?;
+      self::save(conf)?;
       // ...and return an error.
       return Err(FileError::Nonexistent.into());
    } else {
@@ -130,7 +130,7 @@ pub fn load(mut conf: DiscordConfig) -> Result<DiscordConfig>
       let mut fi: Result<File, GenericError> = match File::open(fp) {
          Ok(file) => Ok(file),
          Err(e) => {
-            self::save(&conf)?;
+            self::save(conf)?;
 
             Err(e.into())
          },

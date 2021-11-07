@@ -12,11 +12,7 @@ pub use self::{
 };
 
 use automan::errors::{GenericError, OOBError};
-
-use std::{
-   error::Error,
-};
-
+use std::error::Error;
 use tokio::task::JoinHandle;
 
 // MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -29,11 +25,9 @@ pub const MAX_THREADS: usize = 3;
 async fn main() -> Result<(), GenericError>
 {
    let mut childs = vec![];
-   let mut dis: discord::Bot = discord::setup().await?;
+   let mut discord: discord::Bot = discord::setup().await?;
 
-   let child1: JoinHandle<_> = tokio::spawn(async move {
-      dis.run().await;
-   });
+   let child1: JoinHandle<_> = tokio::spawn(async move { discord.run().await; });
 
    match childs.len() {
       MAX_THREADS => return Err(OOBError.into()),

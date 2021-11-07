@@ -1,7 +1,3 @@
-use std::fmt;
-
-use crate::games::poker;
-
 /// The suit of a [`PlayingCard`].
 ///
 /// [`PlayingCard`]: crate::games::poker::card::PlayingCard
@@ -164,13 +160,6 @@ impl PlayingCard
       return self.0 as u8 == card;
    }
 
-   pub fn to_string(&self) -> String
-   {
-      let mut ret: String = String::new();
-
-      ret
-   }
-
    /*pub fn short_string(&self) -> String
    {
       let mut ret: String = String::new();
@@ -199,6 +188,7 @@ impl PlayingCard
       ret
    }*/
 
+   #[doc(hidden)]
    pub fn long_string(&self) -> String
    {
       let mut ret: String = String::new();
@@ -230,3 +220,7 @@ pub fn card_to_string(card: Card, face_name: bool) -> String
       return poker::utils::auto_to_string(card);
    }
 }
+
+use std::fmt;
+
+use crate::games::poker;
