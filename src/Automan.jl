@@ -1,8 +1,7 @@
 module Automan
    export
       start,
-      Ulid,
-      Util,
+      app_id,
       NAME,
       VERSION
 
@@ -10,13 +9,17 @@ module Automan
    const VERSION = "v0.1.0"
 
    include("Shared.jl")
-   include("Ulid.jl")
-   include("Util.jl")
+
+   function app_id()::String
+      return Shared.Ulid.ulid()
+   end
 
    function start()
-      println(Ulid.ulid())
+      println(app_id())
    end
 end
+
+import Automan
 
 # Start the application.
 Automan.start()
