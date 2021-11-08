@@ -1,5 +1,6 @@
 module Shared
    export
+   run,
    DiscordApp,
    MatrixApp,
    AppConfig,
@@ -15,4 +16,7 @@ module Shared
 
    include("discord/app.jl")
    include("matrix/app.jl")
+
+   function run()
+   end
 end

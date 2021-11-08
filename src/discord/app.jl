@@ -2,8 +2,9 @@ import Discord
 
 mutable struct DiscordApp
    client::Discord.Client
-   discord_config::DiscordConfig
-   app_config::AppConfig
+   config::DiscordConfig
+
+   DiscordApp(client::Discord.Client, config::DiscordConfig) = new(client, config)
 end
 
 """
@@ -11,22 +12,14 @@ end
 
 Initialises the main application instance.
 """
-function init_app()::App
-   return App(client, config)
-end
+function init_discord()::DiscordApp
+   config::DiscordConfig = DiscordConfig("", 20, 2000)
 
-"""
-   load_config()
+   if isfile(DISCORD_CONFIG_PATH)
+      config = load_config()
+   else
+      save_config(config)
+   end
 
-Loads the app configuration from a file.
-"""
-function load_config()::AppConfig
-end
-
-"""
-   save_config()
-
-Saves the app configuration to a file.
-"""
-function save_config()
+   return DiscordApp(client, discord_config, app_config)
 end
