@@ -1,21 +1,19 @@
 module Automan
    export
-      start,
-      app_id,
-      NAME,
-      VERSION
+   start,
+   APP_ID,
+   NAME,
+   VERSION
 
-   const NAME    = "Automan"
-   const VERSION = "v0.1.0"
 
    include("Shared.jl")
 
-   function app_id()::String
-      return Shared.Ulid.ulid()
-   end
+   const NAME    = "Automan"
+   const VERSION = "v0.1.0"
+   const APP_ID = Shared.Ulid.ulid()
 
    function start()
-      println(app_id())
+      println(APP_ID)
    end
 end
 

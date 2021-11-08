@@ -1,6 +1,7 @@
 module Shared
    export
-   App,
+   DiscordApp,
+   MatrixApp,
    AppConfig,
    DiscordConfig,
    MatrixConfig
