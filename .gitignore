@@ -1,3 +1,5 @@
+# Added by Shards tool
+
 /docs/
 /lib/
 /bin/
@@ -7,7 +9,11 @@
 
 # Added by cargo
 
-/target
+/target/
 /discord.log
 /discord.toml
 /poker.toml
+
+# Added by Yarot
+
+/.vscode/
