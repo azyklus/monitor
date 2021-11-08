@@ -11,3 +11,7 @@
 /discord.log
 /discord.toml
 /poker.toml
+
+# Added by Yarot
+
+/.vscode

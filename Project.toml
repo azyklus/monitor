@@ -1,0 +1,10 @@
+name = "Automan"
+uuid = "9438ddec-9237-4a68-a046-99d08cfd1ae4"
+authors = ["Yarot Kell <yarotkel@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Discord = "fcbf000d-02fd-53f1-af91-d952191673d3"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
