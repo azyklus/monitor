@@ -63,13 +63,14 @@ impl Bot
          .normal_message(hooks::normal)
          .on_dispatch_error(hooks::dispatch_error)
          .help(&commands::MY_HELP)
+         .group(&commands::CHAT_GROUP)
          .group(&commands::GENERAL_GROUP)
          .group(&commands::OWNER_GROUP);
 
       let mut client: Client = Client::builder((&config).token())
          .event_handler(Handler)
          .framework(fw)
-         // For this to run properly, the "Presence Intent" and "Server Members Intent" 
+         // For this to run properly, the "Presence Intent" and "Server Members Intent"
          // options need to be enabled.
          // These are needed so the `required_permissions` macro works on the commands that need to
          // use it.

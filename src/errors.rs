@@ -44,7 +44,9 @@ impl Error for OOBError{}
 #[derive(Debug)]
 pub enum FileError
 {
+   /// If the file exists.
    Exists,
+   /// If the file does not exist.
    Nonexistent,
 }
 

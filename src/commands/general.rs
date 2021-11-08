@@ -1,30 +1,3 @@
-use crate::ShardManagerContainer;
-
-use std::collections::HashSet;
-
-use serenity::{
-   client::{
-      Context,
-      bridge::gateway::ShardId,
-   },
-   framework::standard::{
-      Args,
-      CommandGroup,
-      CommandResult,
-      HelpOptions,
-      help_commands,
-      macros::{
-         command,
-         group,
-         help,
-      },
-   },
-   model::{
-      channel::Message,
-      prelude::UserId,
-   },
-};
-
 #[group]
 #[commands(ping)]
 pub struct General;
@@ -67,7 +40,7 @@ pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult
 /// either of them.
 ///
 /// We apply several attributes to this function, as listed here:
-/// - individual_command_tip > This replaces information that a user passes as a command-name argument, 
+/// - individual_command_tip > This replaces information that a user passes as a command-name argument,
 /// granting specific information about it.
 /// - command_not_found_text > The information presented when a supplied command was not found.
 /// - max_levenshtein_distance > Defines the maximum Levenshtein distance between a searched command name
@@ -90,7 +63,7 @@ If you want more information about a specific command, just pass the command as 
 #[max_levenshtein_distance(3)]
 #[indention_prefix="~"]
 #[lacking_permissions="Hide"]
-#[lacking_role="Nothing"]
+#[lacking_role="Strike"]
 #[wrong_channel="Strike"]
 pub async fn my_help(
    ctx: &Context,
@@ -104,3 +77,31 @@ pub async fn my_help(
    let _ = help_commands::with_embeds(ctx, msg, args, opts, groups, owners).await;
    return Ok(());
 }
+
+use crate::ShardManagerContainer;
+
+use std::collections::HashSet;
+
+use serenity::{
+   client::{
+      Context,
+      bridge::gateway::ShardId,
+   },
+   framework::standard::{
+      Args,
+      CommandGroup,
+      CommandResult,
+      HelpOptions,
+      help_commands,
+      macros::{
+         command,
+         group,
+         help,
+      },
+   },
+   model::{
+      channel::Message,
+      prelude::UserId,
+   },
+};
+

@@ -47,12 +47,12 @@ impl EventHandler for Handler
          m
       }).await.unwrap();
 
-      info!("{} joined the guild at {:?}.", member.user.name, member.joined_at);
+      log::info!("{} joined the guild at {:?}.", member.user.name, member.joined_at);
    }
 
    async fn ready(&self, _: Context, ready: Ready)
    {
-      info!("{} is connected!", ready.user.name);
+      log::info!("{} is connected!", ready.user.name);
    }
 }
 
@@ -64,11 +64,18 @@ impl TypeMapKey for CommandCounter
    type Value = HashMap<String, u64>;
 }
 
+/// Chat management commands and functionality.
+pub mod chat;
+pub use chat::CHAT_GROUP;
+
+/// Chat game commands.
+pub mod games;
+
 /// General-use commands.
 pub mod general;
 pub use general::MY_HELP;
 pub use general::GENERAL_GROUP;
 
-/// Owner/Admin specific commands.
+/// Owner-specific commands.
 pub mod owner;
 pub use owner::OWNER_GROUP;
