@@ -1,12 +1,5 @@
-#![crate_name="automan"]
-#![crate_type="lib"]
-#![deny(clippy::all)]
-#![warn(missing_docs)]
-#![allow(unused)]
-#![allow(clippy::needless_return)]
-#![allow(dead_code)]
-#![feature(path_try_exists)]
-
+//! `automan` is a support library for the Monitor program.
+//!
 //! The Monitor is a simple Discord bot that hangs out in the [Narwhals] server.
 //! The bot offers several chat games as well as tools to automatically perform certain
 //! administrative tasks in order to better keep the server organized.
@@ -17,6 +10,15 @@
 //! [Narwhals]: https://discord.gg/GyXtwnBWne
 //! [here]: https://discord.com/api/oauth2/authorize?client_id=817894435299262516&permissions=8&redirect_uri=https%3A%2F%2Fdiscord.com%2Fapi%2Foauth2%2Fauthorize%3Fclient_id%3D817894435299262516%26scope%3Dapplications.commands&scope=bot
 //! [these instructions]: https://github.com/mnimi/monitor/#installation
+#![crate_name="automan"]
+#![crate_type="lib"]
+#![deny(clippy::all)]
+#![warn(missing_docs)]
+#![allow(unused)]
+#![allow(clippy::needless_return)]
+#![allow(dead_code)]
+#![feature(decl_macro)]
+#![feature(path_try_exists)]
 
 /// A supplimentary implementation of the Matrix API.
 ///
@@ -30,3 +32,11 @@ pub mod errors;
 
 /// Contains light implementations of various chat games.
 pub mod games;
+
+/// Macros for basic utilities in the Monitor.
+pub mod macros;
+
+
+// DEPENDENCIES /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+extern crate ulid;

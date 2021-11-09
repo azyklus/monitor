@@ -23,12 +23,8 @@ pub struct Bot
 impl Bot
 {
    /// Creates a new instance of the bot.
-   #[allow(clippy::needless_return)]
-   pub async fn new() -> Result<Bot>
+   pub async fn new(config: DiscordConfig) -> Result<Bot>
    {
-      let mut config: DiscordConfig = DiscordConfig::default();
-      config = config::load(config)?;
-
       let http = Http::new_with_token((&config).token().as_str());
 
       let (owners, bot_id) = match http.get_current_application_info().await {
@@ -92,7 +88,6 @@ impl Bot
    pub fn config(&self) -> Arc<DiscordConfig> { Arc::new(self.config.clone()) }
 
    /// Runs the Discord bot.
-   #[allow(clippy::needless_return)]
    pub async fn run(&mut self) -> Result<()>
    {
       {

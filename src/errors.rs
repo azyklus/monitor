@@ -48,6 +48,8 @@ pub enum FileError
    Exists,
    /// If the file does not exist.
    Nonexistent,
+   /// Can't read the file.
+   Unreadable,
 }
 
 impl fmt::Display for FileError
@@ -57,6 +59,7 @@ impl fmt::Display for FileError
       match self {
          Self::Exists => f.write_str("file already exists"),
          Self::Nonexistent => f.write_str("file does not exist"),
+         Self::Unreadable => f.write_str("cannot read the file"),
       }
    }
 }

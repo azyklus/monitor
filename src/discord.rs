@@ -15,17 +15,10 @@ pub use self::app::Bot;
 /// ...
 /// }
 /// ```
-pub async fn setup() -> Result<Bot, GenericError>
+pub async fn setup(config: DiscordConfig) -> Result<Bot, GenericError>
 {
-   // Setup logging.
-   if let Err(e) = setup_logging() {
-      // Logging setup failed;
-      // return an error.
-      return Err(e.into());
-   }
-
    // Setup the Discord bot itself.
-   let mut bot: Bot = Bot::new().await.unwrap();
+   let mut bot: Bot = Bot::new(config).await.unwrap();
    if let Err(e) = bot.run().await {
       eprintln!("An error occurred while running the Discord bot!");
 
@@ -37,35 +30,11 @@ pub async fn setup() -> Result<Bot, GenericError>
    return Ok(bot);
 }
 
-/// Set up logging functionality for the Monitor application.
-fn setup_logging() -> Result<(), fern::InitError>
-{
-   Dispatch::new()
-      .format(|out, message, record| {
-         out.finish(format_args!(
-            "{}[{}][{}] {}",
-            Local::now().format("[%Y-%m-%d] [%HH:%Mm:%Ss]"),
-            record.target(),
-            record.level(),
-            message,
-         ))
-      })
-      .level(LevelFilter::Debug)
-      .chain(std::io::stdout())
-      .chain(fern::log_file("discord.log")?)
-      .apply()?;
-
-   return Ok(());
-}
-
 /// Contains the main bot loop.
 pub mod app;
 
 /// Discord API configs.
 pub mod config;
+use config::DiscordConfig;
 
 use automan::errors::GenericError;
-
-use chrono::Local;
-use fern::Dispatch;
-use log::LevelFilter;

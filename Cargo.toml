@@ -26,6 +26,8 @@ lazy_static = "1.4.0"
 log = "0.4.14"
 fern = "0.6.0"
 chrono = "0.4.19"
+rillrate = "0.41.0"
+ulid = { version = "0.5.0", features = ["serde"] }
 
 [dependencies.serenity]
 default-features = false

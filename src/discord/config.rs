@@ -10,12 +10,15 @@ pub struct DiscordConfig
 
    /// The number of messages to cache.
    message_cache_size: u32,
+
+   /// The bot's unique identifier.
+   identifier: String,
 }
 
 impl DiscordConfig
 {
    /// The location of the config file, relative to the application root.
-   pub const PATH: &'static str = "discord.toml";
+   pub const PATH: &'static str = "config/discord.toml";
 
    /// Returns the API token for the Discord bot.
    #[inline]
@@ -36,10 +39,20 @@ impl Default for DiscordConfig
    #[inline]
    fn default() -> DiscordConfig
    {
+      let ue: i64 = SystemTime::now().duration_since(UNIX_EPOCH)
+         .unwrap()
+         .as_secs()
+         .try_into()
+         .unwrap();
+
+      let dt: DateTime<Utc> = DateTime::from_utc(NaiveDateTime::from_timestamp(ue, 0), Utc);
+      let ulid: Ulid = Ulid::from_datetime(dt);
+
       return DiscordConfig{
          token: "<API_TOKEN>".to_string(),
          large_threshold: 20,
          message_cache_size: 2000,
+         identifier: ulid.to_string(),
       };
    }
 }
@@ -156,13 +169,18 @@ use automan::errors::{FileError, GenericError};
 
 use anyhow::Result;
 
+use chrono::{DateTime, NaiveDateTime, Utc};
+
 use std::{
    fs::{self, File},
    io::prelude::*,
    path::Path,
+   time::{SystemTime, UNIX_EPOCH},
 };
 
 use toml::{
    ser,
    de,
 };
+
+use ulid::Ulid;
