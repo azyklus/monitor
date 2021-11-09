@@ -1,16 +1,16 @@
-use serenity::{
-   async_trait,
-   client::EventHandler,
-   model::{
-      gateway::Ready,
-      guild::Member,
-      id::{ChannelId, GuildId},
-   },
-   prelude::*,
-};
-
-use std::collections::{HashMap, HashSet};
-
+/// An asynchronous event handler.
+///
+/// An instance of our `Handler` will watch for events defined in the [`EventHandler`] trait impl.
+///
+/// `guild_member_addition` is an event triggered when a [`User`] joins a [`Guild`] that the bot is
+/// party to. When this event is triggered, a message is sent to the first channel in the guild welcoming
+/// the user and the user receives a welcome DM with instructions on how best to proceed.
+///
+/// `ready` is triggered when the bot finishes connecting to the Discord gateway.
+///
+/// [`EventHandler`]: serenity::client::EventHandler
+/// [`User`]: serenity::model::user::User
+/// [`Guild`]: serenity::model::guild::Guild
 pub struct Handler;
 
 #[async_trait]
@@ -31,9 +31,7 @@ impl EventHandler for Handler
             e.description("You have successfully joined the Narwhals fan server!");
 
             e
-         });
-
-         m
+         })
       }).await.unwrap();
 
       channels[0].send_message(&ctx.http, |m| {
@@ -42,9 +40,7 @@ impl EventHandler for Handler
             e.description(&format!("@everyone, please welcome @{}#{} to the server!", member.user.name, member.user.id));
 
             e
-         });
-
-         m
+         })
       }).await.unwrap();
 
       log::info!("{} joined the guild at {:?}.", member.user.name, member.joined_at);
@@ -64,12 +60,15 @@ impl TypeMapKey for CommandCounter
    type Value = HashMap<String, u64>;
 }
 
+// MODULES //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /// Chat management commands and functionality.
 pub mod chat;
 pub use chat::CHAT_GROUP;
 
 /// Chat game commands.
 pub mod games;
+pub use games::GAMES_GROUP;
 
 /// General-use commands.
 pub mod general;
@@ -79,3 +78,19 @@ pub use general::GENERAL_GROUP;
 /// Owner-specific commands.
 pub mod owner;
 pub use owner::OWNER_GROUP;
+
+
+// IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+use serenity::{
+   async_trait,
+   client::EventHandler,
+   model::{
+      gateway::Ready,
+      guild::Member,
+      id::{ChannelId, GuildId},
+   },
+   prelude::*,
+};
+
+use std::collections::{HashMap, HashSet};

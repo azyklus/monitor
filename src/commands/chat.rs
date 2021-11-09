@@ -67,7 +67,7 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
       return Err(e.into());
    }
 
-   let _ = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await;
+   let _ = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
 
    return Ok(());
 }
@@ -110,10 +110,10 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
 }
 
 /// Sets the slow mode rate for the channel in which the command is triggered.
-/// 
-/// 
+///
+///
 /// # Examples
-/// 
+///
 /// `mntr slow 10` > Sets the channel's slow mode rate to `10` seconds.
 /// `mntr freeze 90` > Sets the channel's slow mode rate to `90` seconds.
 #[command]

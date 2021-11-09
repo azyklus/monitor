@@ -64,6 +64,7 @@ impl Bot
          .on_dispatch_error(hooks::dispatch_error)
          .help(&commands::MY_HELP)
          .group(&commands::CHAT_GROUP)
+         .group(&commands::GAMES_GROUP)
          .group(&commands::GENERAL_GROUP)
          .group(&commands::OWNER_GROUP);
 
