@@ -33,21 +33,16 @@ impl AppConfig
    pub const PATH: &'static str = "config/app.toml";
 
    /// Creates a new instance of the `AppConfig`.
-   pub fn new(
-      identifier: String,
-      discord: DiscordConfig,
-      matrix: MatrixConfig
-   ) -> AppConfig
+   pub fn new(identifier: String, discord: DiscordConfig, matrix: MatrixConfig) -> AppConfig
    {
-      return AppConfig{
-         identifier,
-         discord,
-         matrix,
-      };
+      return AppConfig { identifier, discord, matrix };
    }
 
    #[inline]
-   pub fn id(&self) -> String { return self.identifier.clone(); }
+   pub fn id(&self) -> String
+   {
+      return self.identifier.clone();
+   }
 
    /// Saves the app configuration to a file located at [`AppConfig::PATH`].
    ///
@@ -115,13 +110,18 @@ impl AppConfig
    /// [`AppConfig::PATH`]: crate::shared::AppConfig::PATH
    pub fn load(mut self) -> Result<AppConfig>
    {
-      // Assign our `PATH` constant to an `std::path::Path` variable.
-      let fp: &Path = Path::new(AppConfig::PATH);
-      // Create a mutable String variable to hold our data.
-      let mut tm: String = String::new();
+      // Assign our `PATH` constants to `std::path::Path` variables.
+      let fp_a: &Path = Path::new(AppConfig::PATH);
+      let fp_d: &Path = Path::new(DiscordConfig::PATH);
+      let fp_m: &Path = Path::new(MatrixConfig::PATH);
+
+      // Create a set of mutable String variables to hold our data.
+      let mut tm_a: String = String::new();
+      let mut tm_d: String = String::new();
+      let mut tm_m: String = String::new();
 
       // Check whether our config file exists.
-      if let Ok(false) = fs::try_exists(&fp) {
+      if let Ok(false) = fs::try_exists(&fp_a) {
          // It does not exist.
          // We must report the error, create the file, and finally return the error.
          log::error!("The app config file does not exist!");
@@ -131,21 +131,48 @@ impl AppConfig
 
          return Err(FileError::Nonexistent.into());
       } else {
-         // The file exists, so we attempt to open it and return an error if
+         // The files exist, so we attempt to open them and return an error if
          // we encounter a problem.
 
-         let mut fi: Result<File, GenericError> = match File::open(&fp) {
+         let mut fi_a: Result<File, GenericError> = match File::open(&fp_a) {
             Ok(f) => Ok(f),
             Err(e) => Err(e.into()),
          };
 
-         match fi.unwrap().read_to_string(&mut tm) {
-            Ok(_) => {},
+         match fi_a.unwrap().read_to_string(&mut tm_a) {
+            Ok(_) => {}
             Err(e) => return Err(e.into()),
          }
+
+
+         self = de::from_str(tm_a.as_str()).unwrap();
       }
 
-      self = de::from_str(tm.as_str()).unwrap();
+      // Check whether our Discord config exists.
+      if let Ok(false) = fs::try_exists(&fp_d) {
+         // Our Discord config does not exist, so we must create it.
+         log::error!("The discord config file does not exist!");
+         log::info!("Creating the discord config now...");
+
+         let _ = discord::config::save(self.discord.clone()).unwrap();
+      } else {
+         // Our Discord config exists, so we only have to load it into our AppConfig instance.
+         log::info!("Loading the Discord config...");
+         self.discord = discord::config::load(self.discord.clone()).unwrap();
+      }
+
+      // Check whether our Matrix config exists.
+      if let Ok(false) = fs::try_exists(&fp_m) {
+         // Our Matrix config does not exist, so we must create it.
+         log::error!("The matrix config file does not exist!");
+         log::info!("Creating the matrix config now...");
+
+         let _ = matrix::config::save(self.matrix.clone()).unwrap();
+      } else {
+         // Our Matrix config exists, so we only have to load it into our AppConfig instance.
+         log::info!("Loading the Matrix config...");
+         self.matrix = matrix::config::load(self.matrix.clone()).unwrap();
+      }
 
       return Ok(self);
    }
@@ -155,11 +182,7 @@ impl Default for AppConfig
 {
    fn default() -> AppConfig
    {
-      let ue: i64 = SystemTime::now().duration_since(UNIX_EPOCH)
-         .unwrap()
-         .as_secs()
-         .try_into()
-         .unwrap();
+      let ue: i64 = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs().try_into().unwrap();
 
       let dt: DateTime<Utc> = DateTime::from_utc(NaiveDateTime::from_timestamp(ue, 0), Utc);
       let ulid: Ulid = Ulid::from_datetime(dt);
@@ -167,7 +190,7 @@ impl Default for AppConfig
       let discord: DiscordConfig = DiscordConfig::default();
       let matrix: MatrixConfig = MatrixConfig::default();
 
-      return AppConfig{
+      return AppConfig {
          identifier: ulid.to_string(),
          discord,
          matrix,
@@ -175,24 +198,18 @@ impl Default for AppConfig
    }
 }
 
-
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 use crate::{
-   discord::config::DiscordConfig,
-   matrix::config::MatrixConfig,
+   discord::{self, config::DiscordConfig},
+   matrix::{self, config::MatrixConfig},
 };
 
 use automan::errors::*;
 
 use anyhow::Result;
 
-use chrono::{
-   DateTime,
-   NaiveDateTime,
-   TimeZone,
-   Utc,
-};
+use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 
 use std::{
    fs::{self, File},
