@@ -67,7 +67,18 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
       return Err(e.into());
    }
 
-   let _ = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
+   let mut m: Message = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
+   let mut d: Duration = Duration::seconds(10);
+   loop {
+      let d2: Duration = Duration::seconds(1);
+      if !d.is_zero() {
+         d = d.checked_sub(&d2).unwrap();
+         continue;
+      } else {
+         m.delete(&ctx.http).await?;
+         break;
+      }
+   }
 
    return Ok(());
 }
@@ -104,7 +115,18 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
       return Err(e.into());
    }
 
-
+   let mut m: Message = msg.reply(&ctx.http, "Successfully deleted 100 messages!").await?;
+   let mut d: Duration = Duration::seconds(10);
+   loop {
+      let d2: Duration = Duration::seconds(1);
+      if !d.is_zero() {
+         d = d.checked_sub(&d2).unwrap();
+         continue;
+      } else {
+         m.delete(&ctx.http).await?;
+         break;
+      }
+   }
 
    return Ok(());
 }
@@ -218,6 +240,8 @@ pub async fn slow_mode(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 use crate::ShardManagerContainer;
+
+use chrono::Duration;
 
 use std::{
    collections::HashSet,
