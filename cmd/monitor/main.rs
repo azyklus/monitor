@@ -13,8 +13,7 @@
 #![deny(clippy::all)]
 #![allow(unused)]
 #![allow(clippy::needless_return)]
-#![allow(dead_code)]
-#![feature(path_try_exists)]
+
 
 // MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,19 +21,30 @@
 #[tokio::main]
 async fn main() -> Result<(), GenericError>
 {
-   return automan::start().await;
+   if let Err(e) = automan::setup_logging(LevelFilter::Debug, ".logfile") {
+      return Err(e.into());
+   }
+
+   let mut config: AppConfig = AppConfig::default();
+   config = automan::shared::load_config(config)?;
+
+   let mut discord: DiscordBot = automan::setup_discord(&config.discord).await?;
+   let mut matrix: MatrixBot = automan::setup_matrix(&config.matrix)?;
+
+   return automan::start(config, discord, matrix).await;
 }
 
 
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-use automan::errors::GenericError;
+use automan::{
+   discord::DiscordBot,
+   errors::GenericError,
+   matrix::MatrixBot,
+   shared::AppConfig,
+};
 
-
-// CRATE MODULES ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/// Contains the main bot loop.
-pub mod app;
+use log::LevelFilter;
 
 
 // CRATE DEPENDENCIES ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -14,16 +14,16 @@ impl TypeMapKey for ShardManagerContainer
 
 
 /// Contains the main loop for the Discord bot.
-pub struct Bot
+pub struct DiscordBot
 {
    client: Client,
    config: DiscordConfig,
 }
 
-impl Bot
+impl DiscordBot
 {
-   /// Creates a new instance of the bot.
-   pub async fn new(config: &DiscordConfig) -> Result<Bot>
+   /// Creates a new instance of the Discord bot.
+   pub async fn new(config: &DiscordConfig) -> Result<DiscordBot>
    {
       let http = Http::new_with_token(config.token().as_str());
 
@@ -38,7 +38,7 @@ impl Bot
 
             match http.get_current_user().await {
                Ok(bot_id) => (owners, bot_id.id),
-               Err(why) => panic!("Could not access the bot id: {:?}", why),
+               Err(why) => panic!("Could not access the DiscordBot id: {:?}", why),
             }
          },
          Err(why) => panic!("Could not access application info: {:?}", why),
@@ -71,13 +71,13 @@ impl Bot
          // options need to be enabled.
          // These are needed so the `required_permissions` macro works on the commands that need to
          // use it.
-         // You will need to enable these 2 options on the bot application, and possibly wait up to 5
+         // You will need to enable these 2 options on the DiscordBot application, and possibly wait up to 5
          // minutes.
          .intents(GatewayIntents::all())
          .await
          .expect("Error creating client");
 
-      return Ok(Bot{
+      return Ok(DiscordBot{
          config: config.clone(),
          client,
       });
@@ -87,7 +87,7 @@ impl Bot
    #[inline]
    pub fn config(&self) -> Arc<DiscordConfig> { Arc::new(self.config.clone()) }
 
-   /// Runs the Discord bot.
+   /// Runs the Discord DiscordBot.
    pub async fn run(&mut self) -> Result<()>
    {
       {

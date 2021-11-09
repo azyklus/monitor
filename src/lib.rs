@@ -10,8 +10,8 @@
 //! [Narwhals]: https://discord.gg/GyXtwnBWne
 //! [here]: https://discord.com/api/oauth2/authorize?client_id=817894435299262516&permissions=8&redirect_uri=https%3A%2F%2Fdiscord.com%2Fapi%2Foauth2%2Fauthorize%3Fclient_id%3D817894435299262516%26scope%3Dapplications.commands&scope=bot
 //! [these instructions]: https://github.com/mnimi/monitor/#installation
-#![crate_name="automan"]
-#![crate_type="lib"]
+#![crate_name = "automan"]
+#![crate_type = "lib"]
 #![deny(clippy::all)]
 #![warn(missing_docs)]
 #![allow(unused)]
@@ -24,7 +24,7 @@
 pub const MAX_THREADS: usize = 3;
 
 /// Set up logging functionality for the Monitor application.
-fn setup_logging() -> Result<(), fern::InitError>
+pub fn setup_logging(level: LevelFilter, logfile: &str) -> Result<(), fern::InitError>
 {
    Dispatch::new()
       .format(|out, message, record| {
@@ -36,22 +36,42 @@ fn setup_logging() -> Result<(), fern::InitError>
             message,
          ))
       })
-      .level(LevelFilter::Debug)
+      .level(level)
       .chain(std::io::stdout())
-      .chain(fern::log_file("discord.log")?)
+      .chain(fern::log_file(logfile)?)
       .apply()?;
 
    return Ok(());
 }
 
-/// START runs the bot.
-pub async fn start() -> Result<(), GenericError>
+/// Sets up the Discord bot.
+pub async fn setup_discord(config: &DiscordConfig) -> Result<DiscordBot, GenericError>
 {
-   let app_id: String = GLOBAL_CONFIG.id();
+   // Setup the Discord bot itself.
+   let mut bot: DiscordBot = DiscordBot::new(config).await.unwrap();
+   if let Err(e) = bot.run().await {
+      eprintln!("An error occurred while running the Discord bot!");
 
-   if let Err(e) = self::setup_logging() {
+      // an error occurred while attempting to run the bot.
       return Err(e.into());
    }
+
+   // all is okay!
+   return Ok(bot);
+}
+
+/// Sets up the Matrix bot.
+pub fn setup_matrix(config: &MatrixConfig) -> Result<MatrixBot, GenericError>
+{
+   let mut bot: MatrixBot = MatrixBot::new(config).unwrap();
+
+   return Ok(bot);
+}
+
+/// START runs the bot.
+pub async fn start(options: AppConfig, mut discord: DiscordBot, mut matrix: MatrixBot) -> Result<(), GenericError>
+{
+   let app_id: String = options.id();
 
    log::info!("Application: MONITOR");
    log::info!("Version: v0.1.0");
@@ -64,15 +84,20 @@ pub async fn start() -> Result<(), GenericError>
    log::warn!("---");
 
    let mut childs = vec![];
-   let mut discord: discord::Bot = discord::setup(&GLOBAL_CONFIG.discord).await?;
 
-   let child1: JoinHandle<_> = tokio::spawn(async move { discord.run().await; });
+   let child1: JoinHandle<_> = tokio::spawn(async move {
+      discord.run().await;
+   });
+
+   let child2: JoinHandle<_> = tokio::spawn(async move {
+      matrix.run().await;
+   });
 
    match childs.len() {
       MAX_THREADS => return Err(OOBError.into()),
       0 => childs.push(child1),
-      1 => {},
-      2 => {},
+      1 => childs.push(child2),
+      2 => {}
       _ => return Err(OOBError.into()),
    }
 
@@ -88,8 +113,20 @@ pub async fn start() -> Result<(), GenericError>
 pub use crate::{
    commands::CommandCounter,
    discord::app::ShardManagerContainer,
-   errors::{GenericError, OOBError},
+   errors::GenericError,
    shared::AppConfig,
+};
+
+use self::{
+   discord::{
+      DiscordBot,
+      config::DiscordConfig,
+   },
+   errors::*,
+   matrix::{
+      MatrixBot,
+      config::MatrixConfig,
+   },
 };
 
 use std::error::Error;
@@ -100,7 +137,6 @@ use fern::Dispatch;
 use log::LevelFilter;
 
 use ulid::Ulid;
-
 
 // CRATE MODULES ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -132,8 +168,6 @@ pub mod matrix;
 
 /// Contains globally accessible configuration details.
 pub mod shared;
-pub use shared::GLOBAL_CONFIG;
-
 
 // DEPENDENCIES /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -1,7 +1,3 @@
-lazy_static! {
-   pub static ref GLOBAL_CONFIG: AppConfig = self::load_config(AppConfig::default()).unwrap();
-}
-
 /// Application-wide configuration.
 ///
 ///

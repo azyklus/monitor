@@ -1,4 +1,5 @@
 /// Represents the Matrix client configuration.
+#[non_exhaustive]
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MatrixConfig
 {

@@ -1,4 +1,4 @@
-pub use self::app::Bot;
+pub use self::app::DiscordBot;
 
 /// Sets up the Discord bot.
 ///
@@ -15,10 +15,10 @@ pub use self::app::Bot;
 /// ...
 /// }
 /// ```
-pub async fn setup(config: &DiscordConfig) -> Result<Bot, GenericError>
+pub async fn setup(config: &DiscordConfig) -> Result<DiscordBot, GenericError>
 {
    // Setup the Discord bot itself.
-   let mut bot: Bot = Bot::new(config).await.unwrap();
+   let mut bot: DiscordBot = DiscordBot::new(config).await.unwrap();
    if let Err(e) = bot.run().await {
       eprintln!("An error occurred while running the Discord bot!");
 

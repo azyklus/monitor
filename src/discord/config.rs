@@ -1,4 +1,5 @@
 /// Contains configuration values used to interface with Discord.
+#[non_exhaustive]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DiscordConfig
 {
