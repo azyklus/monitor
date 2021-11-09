@@ -1,5 +1,5 @@
 #[group]
-#[commands(delete, wipe)]
+#[commands(delete, wipe, slow_mode)]
 pub struct Chat;
 
 /// Deletes the specified number of messages, up to 99.
@@ -21,7 +21,9 @@ pub struct Chat;
 pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
 {
    let n: u64 = args.parse()?;
-   if n < 2 {
+   let r: RangeInclusive<_> = RangeInclusive::new(2, 100);
+
+   if !r.contains(&n) {
       log::warn!("an invalid integer value was supplied to the 'delete' command");
       let _ = msg.channel_id.send_message(&ctx.http, |m| {
          m.embed(|e| {
@@ -37,15 +39,11 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
             e.description("There was an invalid integer passed to the `delete` command.");
 
             e.footer(|f| {
-               f.text("Run the help command and append the name `delete` to see detailed information about this command.");
-
-               f
+               f.text("Run the help command to see more information about this command.")
             });
 
             e
-         });
-
-         m
+         })
       }).await;
    }
 
@@ -69,7 +67,7 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
       return Err(e.into());
    }
 
-   let _ = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", &msg_ids.len()));
+   let _ = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await;
 
    return Ok(());
 }
@@ -101,9 +99,117 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
       msg_ids.push(id);
    }
 
-   if let Err(e) = msg.channel_id.delete_messages(&ctx.http, msg_ids).await {
+   if let Err(e) = msg.channel_id.delete_messages(&ctx.http, &msg_ids).await {
       log::error!("encountered an error whilst trying to delete the messages");
       return Err(e.into());
+   }
+
+
+
+   return Ok(());
+}
+
+/// Sets the slow mode rate for the channel in which the command is triggered.
+/// 
+/// 
+/// # Examples
+/// 
+/// `mntr slow 10` > Sets the channel's slow mode rate to `10` seconds.
+/// `mntr freeze 90` > Sets the channel's slow mode rate to `90` seconds.
+#[command]
+#[aliases("slow", "freeze")]
+pub async fn slow_mode(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
+{
+   if let Ok(rate) = args.single::<u64>() {
+      if let Err(e) = msg.channel_id.edit(&ctx.http, |c| {
+         c.slow_mode_rate(rate)
+      }).await {
+         log::error!("an error occurred setting channel's slow mode rate");
+         let _ = msg.channel_id.send_message(&ctx.http, |m| {
+            m.embed(|e| {
+               e.title("Error!");
+
+               e.author(|a| {
+                  a.icon_url(&msg.author.avatar_url().unwrap());
+                  a.name("The Monitor");
+
+                  a
+               });
+
+               e.description("Failed to set this channel's slow mode rate.");
+
+               e.footer(|f| {
+                  f.text("Run the help command to see more information about this command.")
+               });
+
+               e
+            })
+         }).await;
+         return Err(e.into());
+      } else {
+         let _ = msg.channel_id.send_message(&ctx.http, |m| {
+            m.embed(|e| {
+               e.title("Success!");
+
+               e.author(|a| {
+                  a.icon_url(&msg.author.avatar_url().unwrap());
+                  a.name("The Monitor");
+
+                  a
+               });
+
+               e.description(format!("Set this channel's slow mode rate to {} seconds", rate));
+
+               e.footer(|f| {
+                  f.text("Run the help command to see more information about this command.")
+               });
+
+               e
+            })
+         }).await;
+      }
+   } else if let Some(Channel::Guild(channel)) = msg.channel_id.to_channel_cached(&ctx.cache).await {
+      let _ = msg.channel_id.send_message(&ctx.http, |m| {
+         m.embed(|e| {
+            e.title("Notice!");
+
+            e.author(|a| {
+               a.icon_url(&msg.author.avatar_url().unwrap());
+               a.name("The Monitor");
+
+               a
+            });
+
+            e.description(format!("Current slow mode rate is `{}` seconds.", channel.slow_mode_rate.unwrap_or(0)));
+
+            e.footer(|f| {
+               f.text("Run the help command to see more information about this command.")
+            });
+
+            e
+         })
+      }).await;
+   } else {
+      let _ = msg.channel_id.send_message(&ctx.http, |m| {
+         m.embed(|e| {
+            e.title("Error!");
+
+            e.author(|a| {
+               a.icon_url(&msg.author.avatar_url().unwrap());
+               a.name("The Monitor");
+
+               a
+            });
+
+            e.description("Failed to find the channel in cache.");
+
+            e.footer(|f| {
+               f.text("Run the help command to see more information about this command.")
+            });
+
+            e
+         })
+      }).await;
    }
 
    return Ok(());
@@ -113,7 +219,10 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
 
 use crate::ShardManagerContainer;
 
-use std::collections::HashSet;
+use std::{
+   collections::HashSet,
+   ops::RangeInclusive,
+};
 
 use serenity::{
    client::{
@@ -131,7 +240,8 @@ use serenity::{
       },
    },
    model::{
-      channel::Message,
-      prelude::{MessageId,UserId},
+      channel::{Channel, Message},
+      prelude::{MessageId, UserId},
    },
+   prelude::*,
 };

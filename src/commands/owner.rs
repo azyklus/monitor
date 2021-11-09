@@ -1,17 +1,3 @@
-use crate::ShardManagerContainer;
-
-use serenity::{
-   client::Context,
-   framework::standard::{
-      CommandResult,
-      macros::{
-         command,
-         group,
-      },
-   },
-   model::channel::Message,
-};
-
 /// Commands specific to Owner/Admin roles.
 #[group]
 #[commands(stop)]
@@ -29,6 +15,8 @@ pub async fn stop(ctx: &Context, msg: &Message) -> CommandResult
    if let Some(mngr) = data.get::<ShardManagerContainer>() {
       msg.reply(ctx, "Shutting down!").await?;
       mngr.lock().await.shutdown_all().await;
+
+      return Ok(());
    } else {
       msg.reply(ctx, "There was a problem getting the shard manager").await?;
 
@@ -37,3 +25,20 @@ pub async fn stop(ctx: &Context, msg: &Message) -> CommandResult
 
    return Ok(());
 }
+
+
+// IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+use crate::ShardManagerContainer;
+
+use serenity::{
+   client::Context,
+   framework::standard::{
+      CommandResult,
+      macros::{
+         command,
+         group,
+      },
+   },
+   model::channel::Message,
+};

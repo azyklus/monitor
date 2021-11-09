@@ -6,15 +6,6 @@
 #![allow(dead_code)]
 #![feature(path_try_exists)]
 
-pub use self::{
-   commands::CommandCounter,
-   discord::app::ShardManagerContainer,
-};
-
-use automan::errors::{GenericError, OOBError};
-use std::error::Error;
-use tokio::task::JoinHandle;
-
 // MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// The maximum number of threads allowed to be running simultaneously.
@@ -43,6 +34,19 @@ async fn main() -> Result<(), GenericError>
 
    return Ok(());
 }
+
+
+// IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+pub use self::{
+   commands::CommandCounter,
+   discord::app::ShardManagerContainer,
+};
+
+use automan::errors::{GenericError, OOBError};
+use std::error::Error;
+use tokio::task::JoinHandle;
+
 
 // CRATE MODULES ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
