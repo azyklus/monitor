@@ -1,0 +1,3 @@
+server = 'https://example.com/'
+token = '<TOKEN_HERE>'
+identifier = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'

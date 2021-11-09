@@ -1,0 +1,12 @@
+identifier = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+[discord]
+token = 'Bot <TOKEN>'
+large_threshold = 20
+message_cache_size = 2000
+identifier = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+[matrix]
+server = 'https://example.com/'
+token = '<TOKEN_HERE>'
+identifier = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'

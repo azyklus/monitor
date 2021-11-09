@@ -121,6 +121,9 @@ pub mod errors;
 /// Contains light implementations of various chat games.
 pub mod games;
 
+/// Contains a GIPHY client implementation.
+pub mod gif;
+
 /// Macros for basic utilities in the Monitor.
 pub mod macros;
 

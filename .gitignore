@@ -17,4 +17,6 @@
 # Added by Yarot
 
 /.vscode/
-/config/
+/config/app.toml
+/config/discord.toml
+/config/matrix.toml
