@@ -38,6 +38,7 @@ impl AppConfig
       return AppConfig { identifier, discord, matrix };
    }
 
+   /// Returns the app's ULID.
    #[inline]
    pub fn id(&self) -> String
    {
@@ -70,10 +71,7 @@ impl AppConfig
          // It does, so we'll only try to write our data.
 
          // Open the file first.
-         let mut fi: File = OpenOptions::new()
-            .write(true)
-            .open(&fp)
-            .unwrap();
+         let mut fi: File = OpenOptions::new().write(true).open(&fp).unwrap();
 
          if let Err(e) = fi.write_all(tm.as_bytes()) {
             // The operation failed.
@@ -201,6 +199,20 @@ impl Default for AppConfig
    }
 }
 
+/// Combines the `save` and `load` methods in [`AppConfig`] into
+/// a single helper function.
+///
+///
+/// # Examples
+///
+/// ```
+/// use crate::shared::{load_config, AppConfig};
+///
+/// let mut config = load_config(AppConfig::default).unwrap();
+/// ```
+///
+///
+/// [`AppConfig::PATH`]: crate::shared::AppConfig::PATH
 pub fn load_config(mut conf: AppConfig) -> Result<AppConfig>
 {
    let mut matrix: MatrixConfig = conf.matrix.clone();
@@ -279,25 +291,15 @@ pub fn load_config(mut conf: AppConfig) -> Result<AppConfig>
 use crate::{
    discord::{self, config::DiscordConfig},
    matrix::{self, config::MatrixConfig},
+   errors::*,
 };
-
-use automan::errors::*;
 
 use anyhow::Result;
 
-use chrono::{
-   DateTime,
-   NaiveDateTime,
-   TimeZone,
-   Utc
-};
+use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
 
 use std::{
-   fs::{
-      self,
-      File,
-      OpenOptions
-   },
+   fs::{self, File, OpenOptions},
    io::prelude::*,
    path::Path,
    time::{SystemTime, UNIX_EPOCH},

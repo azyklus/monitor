@@ -22,6 +22,16 @@ command = "cargo"
 args = ["test"]
 dependencies = ["clean"]
 
+[tasks.run]
+command = "cargo"
+args = [
+  "run",
+  "-Z",
+  "unstable-options",
+  "--manifest-path",
+  "cmd/monitor/Cargo.toml",
+]
+
 [tasks.flow]
 dependencies = [
    "format",

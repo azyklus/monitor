@@ -1,16 +1,14 @@
-cargo-features = ["edition2021"]
-
 [package]
-name = "monitor"
+name = "automan"
 version = "0.1.0"
-authors = ["Yarot Kell <mechild02@gmail.com>"]
+authors = ["Yarot Kell <yarotkel@gmail.com>"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
 name = "monitor"
-path = "src/main.rs"
+path = "cmd/monitor/main.rs"
 
 [lib]
 name = "automan"
@@ -28,6 +26,8 @@ fern = "0.6.0"
 chrono = "0.4.19"
 rillrate = "0.41.0"
 ulid = { version = "0.5.0", features = ["serde"] }
+rand = "0.8.4"
+giphy = "0.4.1"
 
 [dependencies.serenity]
 default-features = false

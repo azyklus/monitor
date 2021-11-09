@@ -1,3 +1,4 @@
+/// Represents the Matrix client configuration.
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MatrixConfig
 {
@@ -13,6 +14,7 @@ pub struct MatrixConfig
 
 impl MatrixConfig
 {
+   /// The location of the Matrix config.
    pub const PATH: &'static str = "config/matrix.toml";
 }
 
@@ -144,9 +146,9 @@ pub fn load(mut conf: MatrixConfig) -> Result<MatrixConfig>
 
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-use anyhow::Result;
+use crate::errors::*;
 
-use automan::errors::*;
+use anyhow::Result;
 
 use chrono::{
    DateTime,

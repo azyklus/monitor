@@ -23,9 +23,9 @@ pub struct Bot
 impl Bot
 {
    /// Creates a new instance of the bot.
-   pub async fn new(config: DiscordConfig) -> Result<Bot>
+   pub async fn new(config: &DiscordConfig) -> Result<Bot>
    {
-      let http = Http::new_with_token((&config).token().as_str());
+      let http = Http::new_with_token(config.token().as_str());
 
       let (owners, bot_id) = match http.get_current_application_info().await {
          Ok(ini) => {
@@ -64,7 +64,7 @@ impl Bot
          .group(&commands::GENERAL_GROUP)
          .group(&commands::OWNER_GROUP);
 
-      let mut client: Client = Client::builder((&config).token())
+      let mut client: Client = Client::builder(&config.token())
          .event_handler(Handler)
          .framework(fw)
          // For this to run properly, the "Presence Intent" and "Server Members Intent"
@@ -78,7 +78,7 @@ impl Bot
          .expect("Error creating client");
 
       return Ok(Bot{
-         config,
+         config: config.clone(),
          client,
       });
    }

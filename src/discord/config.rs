@@ -22,15 +22,19 @@ impl DiscordConfig
 
    /// Returns the API token for the Discord bot.
    #[inline]
-   pub fn token(&self) -> String{ return self.token.clone(); }
+   pub fn token(&self) -> String { return self.token.clone(); }
 
    /// Returns the specified message cache size for the Discord bot.
    #[inline]
-   pub fn cache_size(&self) -> u32{ return self.message_cache_size; }
+   pub fn cache_size(&self) -> u32 { return self.message_cache_size; }
 
    /// Returns the large threshold specified in the configuration instance.
    #[inline]
-   pub fn large_threshold(&self) -> u32{ return self.large_threshold; }
+   pub fn large_threshold(&self) -> u32 { return self.large_threshold; }
+
+   /// Returns the unique identifier from the config instance.
+   #[inline]
+   pub fn id(&self) -> String { return self.identifier.clone(); }
 }
 
 impl Default for DiscordConfig
@@ -165,7 +169,7 @@ pub fn load(mut conf: DiscordConfig) -> Result<DiscordConfig>
    return Ok(conf);
 }
 
-use automan::errors::{FileError, GenericError};
+use crate::errors::{FileError, GenericError};
 
 use anyhow::Result;
 

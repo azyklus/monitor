@@ -11,11 +11,11 @@ pub use self::app::Bot;
 /// fn main()
 /// {
 /// ...
-///    let bot = discord::setup().await.unwrap();
+///    let bot = discord::setup(config).await.unwrap();
 /// ...
 /// }
 /// ```
-pub async fn setup(config: DiscordConfig) -> Result<Bot, GenericError>
+pub async fn setup(config: &DiscordConfig) -> Result<Bot, GenericError>
 {
    // Setup the Discord bot itself.
    let mut bot: Bot = Bot::new(config).await.unwrap();
@@ -30,11 +30,12 @@ pub async fn setup(config: DiscordConfig) -> Result<Bot, GenericError>
    return Ok(bot);
 }
 
-/// Contains the main bot loop.
+
+use crate::errors::GenericError;
+
+/// The main bot functionality.
 pub mod app;
 
 /// Discord API configs.
 pub mod config;
 use config::DiscordConfig;
-
-use automan::errors::GenericError;

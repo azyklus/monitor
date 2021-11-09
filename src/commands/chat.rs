@@ -1,5 +1,10 @@
 #[group]
-#[commands(delete, wipe, slow_mode)]
+#[commands(
+   delete,
+   wipe,
+   slowmode,
+   meme
+)]
 pub struct Chat;
 
 /// Deletes the specified number of messages, up to 99.
@@ -140,7 +145,7 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
 /// `mntr freeze 90` > Sets the channel's slow mode rate to `90` seconds.
 #[command]
 #[aliases("slow", "freeze")]
-pub async fn slow_mode(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
+pub async fn slowmode(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
 {
    if let Ok(rate) = args.single::<u64>() {
       if let Err(e) = msg.channel_id.edit(&ctx.http, |c| {
@@ -233,6 +238,15 @@ pub async fn slow_mode(ctx: &Context, msg: &Message, mut args: Args) -> CommandR
          })
       }).await;
    }
+
+   return Ok(());
+}
+
+/// Sends a random meme as a reply to the trigger message.
+#[command]
+pub async fn meme(ctx: &Context, msg: &Message) -> CommandResult
+{
+   let random = rand::thread_rng();
 
    return Ok(());
 }
