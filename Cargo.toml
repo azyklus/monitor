@@ -28,6 +28,7 @@ rillrate = "0.41.0"
 ulid = { version = "0.5.0", features = ["serde"] }
 rand = "0.8.4"
 giphy = "0.4.1"
+reqwest = "0.11.6"
 
 [dependencies.serenity]
 default-features = false

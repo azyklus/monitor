@@ -60,6 +60,14 @@ pub async fn setup_discord(config: &DiscordConfig) -> Result<DiscordBot, Generic
    return Ok(bot);
 }
 
+/// Sets up the Giphy bot.
+pub fn setup_giphy(config: &GiphyConfig) -> Result<GiphyBot, GenericError>
+{
+   let mut bot: GiphyBot = GiphyBot::new(config).unwrap();
+
+   return Ok(bot);
+}
+
 /// Sets up the Matrix bot.
 pub fn setup_matrix(config: &MatrixConfig) -> Result<MatrixBot, GenericError>
 {
@@ -68,7 +76,7 @@ pub fn setup_matrix(config: &MatrixConfig) -> Result<MatrixBot, GenericError>
    return Ok(bot);
 }
 
-/// START runs the bot.
+/// STARTs the bot.
 pub async fn start(options: AppConfig, mut discord: DiscordBot, mut matrix: MatrixBot) -> Result<(), GenericError>
 {
    let app_id: String = options.id();
@@ -123,6 +131,10 @@ use self::{
       config::DiscordConfig,
    },
    errors::*,
+   gif::{
+      GiphyBot,
+      config::GiphyConfig,
+   },
    matrix::{
       MatrixBot,
       config::MatrixConfig,
