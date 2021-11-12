@@ -29,7 +29,7 @@ pub async fn stop(ctx: &Context, msg: &Message) -> CommandResult
 
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-use crate::ShardManagerContainer;
+use automan::ShardManagerContainer;
 
 use serenity::{
    client::Context,

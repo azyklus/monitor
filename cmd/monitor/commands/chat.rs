@@ -1,3 +1,6 @@
+/// The 'Chat' command group.
+/// 
+/// This contains commands related directly to various chat usages.
 #[group]
 #[commands(
    delete,
@@ -244,16 +247,24 @@ pub async fn slowmode(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
 
 /// Sends a random meme as a reply to the trigger message.
 #[command]
-pub async fn meme(ctx: &Context, msg: &Message) -> CommandResult
+pub async fn meme(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
 {
+   let arg: String = args.single().unwrap();
    let random = rand::thread_rng();
+   
+   if arg.as_str() == "trending" {
+      
+   }
 
    return Ok(());
 }
 
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-use crate::ShardManagerContainer;
+use automan::{
+   ShardManagerContainer,
+   gif::GiphyBot,
+};
 
 use chrono::Duration;
 
