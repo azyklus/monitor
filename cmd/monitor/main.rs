@@ -57,7 +57,7 @@ async fn main() -> Result<(), GenericError>
       .configure(|c| {
          c.with_whitespace(true)
             .on_mention(Some(bot_id))
-            .prefix("~")
+            .prefix(&config.discord.prefix())
             // In this case, if "," would be first, a message would never
             // be delimited at ", ", forcing you to trim your arguments if you
             // want to avoid whitespaces at the start of each.
