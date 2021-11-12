@@ -6,6 +6,9 @@ large_threshold = 20
 message_cache_size = 2000
 identifier = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
+[giphy]
+token = '<TOKEN>'
+
 [matrix]
 server = 'https://example.com/'
 token = '<TOKEN_HERE>'
