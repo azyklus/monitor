@@ -20,3 +20,5 @@
 /config/app.toml
 /config/discord.toml
 /config/matrix.toml
+/config/giphy.toml
+/.logfile
