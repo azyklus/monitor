@@ -3,6 +3,8 @@
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DiscordConfig
 {
+   prefix: String,
+
    /// The token for accessing the Discord API.
    token: String,
 
@@ -20,6 +22,10 @@ impl DiscordConfig
 {
    /// The location of the config file, relative to the application root.
    pub const PATH: &'static str = "config/discord.toml";
+
+   /// Returns the command prefix for the bot.
+   #[inline]
+   pub fn prefix(&self) -> String { return self.prefix.clone(); }
 
    /// Returns the API token for the Discord bot.
    #[inline]
@@ -54,6 +60,7 @@ impl Default for DiscordConfig
       let ulid: Ulid = Ulid::from_datetime(dt);
 
       return DiscordConfig{
+         prefix: "mntr ".to_string(),
          token: "<API_TOKEN>".to_string(),
          large_threshold: 20,
          message_cache_size: 2000,

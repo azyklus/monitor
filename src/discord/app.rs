@@ -23,7 +23,7 @@ pub struct DiscordBot
 impl DiscordBot
 {
    /// Creates a new instance of the Discord bot.
-   pub async fn new(config: &DiscordConfig) -> Result<DiscordBot>
+   pub async fn new(config: &DiscordConfig, fw: StandardFramework) -> Result<DiscordBot>
    {
       let http = Http::new_with_token(config.token().as_str());
 
@@ -43,26 +43,6 @@ impl DiscordBot
          },
          Err(why) => panic!("Could not access application info: {:?}", why),
       };
-
-      let fw = StandardFramework::new()
-         .configure(|c| {
-            c
-               .prefix("mntr ")
-               .on_mention(Some(bot_id))
-               .with_whitespace(true)
-               .delimiters(vec![", ", ","])
-               .owners(owners)
-         })
-         .before(hooks::before)
-         .after(hooks::after)
-         .unrecognised_command(hooks::unknown)
-         .normal_message(hooks::normal)
-         .on_dispatch_error(hooks::dispatch_error)
-         .help(&commands::MY_HELP)
-         .group(&commands::CHAT_GROUP)
-         .group(&commands::GAMES_GROUP)
-         .group(&commands::GENERAL_GROUP)
-         .group(&commands::OWNER_GROUP);
 
       let mut client: Client = Client::builder(&config.token())
          .event_handler(Handler)
@@ -106,7 +86,7 @@ impl DiscordBot
 
 use anyhow::Result;
 
-use crate::commands::CommandCounter;
+use crate::{CommandCounter, Handler};
 
 use serenity::{
    client::{
@@ -133,8 +113,4 @@ use std::{
 
 use tokio::sync::Mutex;
 
-use crate::commands::{self, Handler};
 use super::config::{self, DiscordConfig};
-
-#[doc(hidden)]
-pub mod hooks;

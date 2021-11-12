@@ -78,7 +78,7 @@ pub async fn my_help(
    return Ok(());
 }
 
-use crate::ShardManagerContainer;
+use automan::ShardManagerContainer;
 
 use std::collections::HashSet;
 

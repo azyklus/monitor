@@ -19,6 +19,9 @@ pub struct AppConfig
    /// Discord-specific configuration details.
    pub discord: DiscordConfig,
 
+   /// Giphy-specific configuration.
+   pub gif: GiphyConfig,
+
    /// Matrix-specific configuration details.
    pub matrix: MatrixConfig,
 }
@@ -29,9 +32,9 @@ impl AppConfig
    pub const PATH: &'static str = "config/app.toml";
 
    /// Creates a new instance of the `AppConfig`.
-   pub fn new(identifier: String, discord: DiscordConfig, matrix: MatrixConfig) -> AppConfig
+   pub fn new(identifier: String, discord: DiscordConfig, gif: GiphyConfig, matrix: MatrixConfig) -> AppConfig
    {
-      return AppConfig { identifier, discord, matrix };
+      return AppConfig { identifier, discord, gif, matrix };
    }
 
    /// Returns the app's ULID.
@@ -185,11 +188,13 @@ impl Default for AppConfig
       let ulid: Ulid = Ulid::from_datetime(dt);
 
       let discord: DiscordConfig = DiscordConfig::default();
+      let gif: GiphyConfig = GiphyConfig::default();
       let matrix: MatrixConfig = MatrixConfig::default();
 
       return AppConfig {
          identifier: ulid.to_string(),
          discord,
+         gif,
          matrix,
       };
    }
@@ -213,6 +218,7 @@ pub fn load_config(mut conf: AppConfig) -> Result<AppConfig>
 {
    let mut matrix: MatrixConfig = conf.matrix.clone();
    let mut discord: DiscordConfig = conf.discord.clone();
+   let mut gif: GiphyConfig = conf.gif.clone();
    let mut app: AppConfig = conf.clone();
 
    if let Ok(true) = fs::try_exists("config/discord.toml") {
@@ -249,6 +255,23 @@ pub fn load_config(mut conf: AppConfig) -> Result<AppConfig>
       fi.write_all(tml.as_bytes()).unwrap();
    }
 
+   if let Ok(true) = fs::try_exists("config/giphy.toml") {
+      let mut tml: String = String::new();
+
+      let mut fi = File::open("config/giphy.toml").unwrap();
+      fi.read_to_string(&mut tml).unwrap();
+
+      gif = toml::from_str(tml.as_str()).unwrap();
+   } else {
+      log::error!("Giphy config file does not exist.");
+      log::error!("Creating it now...");
+
+      let mut tml = toml::to_string_pretty(&gif).unwrap();
+
+      let mut fi = File::create("config/giphy.toml").unwrap();
+      fi.write_all(tml.as_bytes()).unwrap();
+   }
+
    if let Ok(true) = fs::try_exists("config/app.toml") {
       let mut tml: String = String::new();
 
@@ -258,6 +281,7 @@ pub fn load_config(mut conf: AppConfig) -> Result<AppConfig>
       app = toml::from_str(tml.as_str()).unwrap();
       app.discord = discord;
       app.matrix = matrix;
+      app.gif = gif;
 
       conf = app;
 
@@ -268,6 +292,7 @@ pub fn load_config(mut conf: AppConfig) -> Result<AppConfig>
 
       app.discord = discord;
       app.matrix = matrix;
+      app.gif = gif;
 
       let mut tml: String = toml::to_string_pretty(&app).unwrap();
 
@@ -286,6 +311,7 @@ pub fn load_config(mut conf: AppConfig) -> Result<AppConfig>
 
 use crate::{
    discord::{self, config::DiscordConfig},
+   gif::{self, config::GiphyConfig},
    matrix::{self, config::MatrixConfig},
    errors::*,
 };
