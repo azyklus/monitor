@@ -14,7 +14,8 @@ If you wish to run your own instance of Monitor, follow these instructions:
 
 ## Usage
 
-TODO: Write usage instructions here
+To use the Monitor in your own Discord server, you will first need to create an Application on [Discord's Developers page].
+You can do this by 
 
 ## Development
 
@@ -33,3 +34,5 @@ TODO: Write development instructions here
 - [Yarot Kell](https://twitter.com/yarotk) - creator and maintainer
 - [ShockEMP](https://twitter.com/_shockemp) - contributor
 - [Dwellr](https://twitter.com/dwellr4) - contributor
+
+[Discord's Developer page]: https://discord.com/developers/applications
