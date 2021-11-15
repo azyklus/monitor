@@ -13,6 +13,7 @@
 #![deny(clippy::all)]
 #![allow(unused)]
 #![allow(clippy::needless_return)]
+#![feature(exclusive_range_pattern)]
 
 lazy_static! {
    /// A global CONFIG object.
@@ -55,7 +56,8 @@ async fn main() -> Result<(), GenericError>
 
    let fw = StandardFramework::new()
       .configure(|c| {
-         c.with_whitespace(true)
+         c
+            .with_whitespace(true)
             .on_mention(Some(bot_id))
             .prefix(&config.discord.prefix)
             // In this case, if "," would be first, a message would never
