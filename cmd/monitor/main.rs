@@ -19,7 +19,7 @@ lazy_static! {
    pub static ref CONFIG: AppConfig = automan::shared::load_config(AppConfig::default()).unwrap();
 
    /// The main GIPHY client object.
-   pub static ref GIPHY: GiphyBot = GiphyBot::new(&CONFIG.gif).unwrap();
+   pub static ref GIPHY: GiphyBot = GiphyBot::new(&CONFIG.giphy).unwrap();
 }
 
 // MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ async fn main() -> Result<(), GenericError>
 
    let config = CONFIG.clone();
 
-   let http = Http::new_with_token(&config.discord.token());
+   let http = Http::new_with_token(&config.discord.token);
 
    // We will fetch your bot's owners and id
    let (owners, bot_id) = match http.get_current_application_info().await {
@@ -57,7 +57,7 @@ async fn main() -> Result<(), GenericError>
       .configure(|c| {
          c.with_whitespace(true)
             .on_mention(Some(bot_id))
-            .prefix(&config.discord.prefix())
+            .prefix(&config.discord.prefix)
             // In this case, if "," would be first, a message would never
             // be delimited at ", ", forcing you to trim your arguments if you
             // want to avoid whitespaces at the start of each.

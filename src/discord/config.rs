@@ -3,45 +3,26 @@
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DiscordConfig
 {
-   prefix: String,
+   /// The bot's unique identifier.
+   pub id: String,
+
+   /// Command prefix.
+   pub prefix: String,
 
    /// The token for accessing the Discord API.
-   token: String,
+   pub token: String,
 
    /// The threshold for caching offline guild members.
-   large_threshold: u32,
+   pub large_threshold: u32,
 
    /// The number of messages to cache.
-   message_cache_size: u32,
-
-   /// The bot's unique identifier.
-   identifier: String,
+   pub message_cache_size: u32,
 }
 
 impl DiscordConfig
 {
    /// The location of the config file, relative to the application root.
    pub const PATH: &'static str = "config/discord.toml";
-
-   /// Returns the command prefix for the bot.
-   #[inline]
-   pub fn prefix(&self) -> String { return self.prefix.clone(); }
-
-   /// Returns the API token for the Discord bot.
-   #[inline]
-   pub fn token(&self) -> String { return self.token.clone(); }
-
-   /// Returns the specified message cache size for the Discord bot.
-   #[inline]
-   pub fn cache_size(&self) -> u32 { return self.message_cache_size; }
-
-   /// Returns the large threshold specified in the configuration instance.
-   #[inline]
-   pub fn large_threshold(&self) -> u32 { return self.large_threshold; }
-
-   /// Returns the unique identifier from the config instance.
-   #[inline]
-   pub fn id(&self) -> String { return self.identifier.clone(); }
 }
 
 impl Default for DiscordConfig
@@ -60,11 +41,11 @@ impl Default for DiscordConfig
       let ulid: Ulid = Ulid::from_datetime(dt);
 
       return DiscordConfig{
+         id: ulid.to_string(),
          prefix: "mntr ".to_string(),
          token: "<API_TOKEN>".to_string(),
          large_threshold: 20,
          message_cache_size: 2000,
-         identifier: ulid.to_string(),
       };
    }
 }

@@ -3,14 +3,14 @@
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MatrixConfig
 {
+   /// The Matrix app's unique identifier.
+   pub id: String,
+
    /// The server to connect with.
-   server: String,
+   pub server: String,
 
    /// The authentication token.
-   token: String,
-
-   /// The Matrix app's unique identifier.
-   identifier: String,
+   pub token: String,
 }
 
 impl MatrixConfig
@@ -33,9 +33,9 @@ impl Default for MatrixConfig
       let ulid: Ulid = Ulid::from_datetime(dt);
 
       return MatrixConfig{
+         id: ulid.to_string(),
          server: "https://example.com/".to_string(),
          token: "<TOKEN_HERE>".to_string(),
-         identifier: ulid.to_string(),
       };
    }
 }

@@ -142,7 +142,7 @@ pub fn setup_matrix(config: &MatrixConfig) -> Result<MatrixBot, GenericError>
 /// STARTs the bot.
 pub async fn start(options: AppConfig, mut discord: DiscordBot, mut matrix: MatrixBot) -> Result<(), GenericError>
 {
-   let app_id: String = options.id();
+   let app_id: String = options.id;
 
    log::info!("Application: MONITOR");
    log::info!("Version: v0.1.0");
