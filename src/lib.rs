@@ -140,7 +140,7 @@ pub fn setup_matrix(config: &MatrixConfig) -> Result<MatrixBot, GenericError>
 }
 
 /// STARTs the bot.
-pub async fn start(options: AppConfig, mut discord: DiscordBot, mut matrix: MatrixBot) -> Result<(), GenericError>
+pub async fn start(options: AppConfig, mut discord: DiscordBot, mut giphy: GiphyBot, mut matrix: MatrixBot) -> Result<(), GenericError>
 {
    let app_id: String = options.id();
 

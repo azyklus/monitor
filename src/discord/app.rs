@@ -11,8 +11,6 @@ impl TypeMapKey for ShardManagerContainer
    type Value = Arc<Mutex<ShardManager>>;
 }
 
-
-
 /// Contains the main loop for the Discord bot.
 pub struct DiscordBot
 {
@@ -23,7 +21,7 @@ pub struct DiscordBot
 impl DiscordBot
 {
    /// Creates a new instance of the Discord bot.
-   pub async fn new(config: &DiscordConfig, fw: StandardFramework) -> Result<DiscordBot>
+   pub async fn new(config: &DiscordConfig, fw: StandardFramework) -> Result<DiscordBot, GenericError>
    {
       let http = Http::new_with_token(config.token().as_str());
 
@@ -68,7 +66,7 @@ impl DiscordBot
    pub fn config(&self) -> Arc<DiscordConfig> { Arc::new(self.config.clone()) }
 
    /// Runs the Discord DiscordBot.
-   pub async fn run(&mut self) -> Result<()>
+   pub async fn run(&mut self) -> Result<(), GenericError>
    {
       {
          let mut data = self.client.data.write().await;
@@ -84,9 +82,10 @@ impl DiscordBot
    }
 }
 
-use anyhow::Result;
 
-use crate::{CommandCounter, Handler};
+// IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+use crate::{errors::*, CommandCounter, Handler};
 
 use serenity::{
    client::{

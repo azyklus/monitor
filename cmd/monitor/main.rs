@@ -14,15 +14,19 @@
 #![allow(unused)]
 #![allow(clippy::needless_return)]
 
+
+// MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 lazy_static! {
+   /// The default config object.
+   pub static ref DEFAULT_CONFIG: AppConfig = AppConfig::default();
+
    /// A global CONFIG object.
-   pub static ref CONFIG: AppConfig = automan::shared::load_config(AppConfig::default()).unwrap();
+   pub static ref CONFIG: AppConfig = load_config(DEFAULT_CONFIG.clone()).unwrap();
 
    /// The main GIPHY client object.
    pub static ref GIPHY: GiphyBot = GiphyBot::new(&CONFIG.gif).unwrap();
 }
-
-// MAIN APPLICATION LOGIC ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #[doc(hidden)]
 #[tokio::main]
@@ -117,9 +121,10 @@ async fn main() -> Result<(), GenericError>
       .group(&commands::GAMES_GROUP);
 
    let mut discord: DiscordBot = automan::setup_discord(&config.discord, fw).await?;
+   let mut giphy: GiphyBot = automan::setup_giphy(&config.gif)?;
    let mut matrix: MatrixBot = automan::setup_matrix(&config.matrix)?;
 
-   return automan::start(config, discord, matrix).await;
+   return automan::start(config, discord, giphy, matrix).await;
 }
 
 // MODULES //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +142,7 @@ use automan::{
    errors::GenericError,
    gif::{config::GiphyConfig, GiphyBot},
    matrix::MatrixBot,
-   shared::AppConfig,
+   shared::*,
    CommandCounter,
 };
 
