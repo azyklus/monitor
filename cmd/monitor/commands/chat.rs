@@ -6,7 +6,7 @@
    delete,
    wipe,
    slowmode,
-   meme
+   gif
 )]
 pub struct Chat;
 
@@ -76,7 +76,7 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
    }
 
    let mut m: Message = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
-   let mut d: Duration = Duration::seconds(10);
+   let mut d: Duration = Duration::seconds(100);
    loop {
       let d2: Duration = Duration::seconds(1);
       if !d.is_zero() {
@@ -124,7 +124,7 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
    }
 
    let mut m: Message = msg.reply(&ctx.http, "Successfully deleted 100 messages!").await?;
-   let mut d: Duration = Duration::seconds(10);
+   let mut d: Duration = Duration::seconds(100);
    loop {
       let d2: Duration = Duration::seconds(1);
       if !d.is_zero() {
@@ -247,19 +247,25 @@ pub async fn slowmode(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
 
 /// Sends a random meme as a reply to the trigger message.
 #[command]
-pub async fn meme(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
+pub async fn gif(ctx: &Context, msg: &Message) -> CommandResult
 {
-   let arg: String = args.single().unwrap();
-   let random = rand::thread_rng();
-   
-   if arg.as_str() == "trending" {
-      
-   }
+   let mut rnd = rngs::OsRng;
+   let num = rnd.gen_range(0..25) as usize;
+
+   let gifs: Vec<Gif> = (&GIPHY).trending().await.unwrap();
+
+   let _ = msg.channel_id.send_message(&ctx.http, |m| {
+      m.content(&gifs[num].url)
+   }).await;
 
    return Ok(());
 }
 
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+use crate::{
+   GIPHY,
+};
 
 use automan::{
    ShardManagerContainer,
@@ -267,6 +273,10 @@ use automan::{
 };
 
 use chrono::Duration;
+
+use giphy::v1::Gif;
+
+use rand::{rngs, Rng, RngCore};
 
 use std::{
    collections::HashSet,
