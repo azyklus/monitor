@@ -5,7 +5,6 @@ pub mod app;
 
 /// Discord API configs.
 pub mod config;
-pub use config::DiscordConfig;
 
 #[doc(hidden)]
 pub mod hooks;
@@ -15,3 +14,10 @@ pub mod interactivity;
 
 /// Pagination for the Discord-Serenity API.
 pub mod pagination;
+
+// EXPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+pub use self::{
+   app::DiscordBot,
+   config::DiscordConfig,
+};
