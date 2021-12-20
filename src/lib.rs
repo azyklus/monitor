@@ -140,14 +140,18 @@ pub fn setup_matrix(config: &MatrixConfig) -> Result<MatrixBot, GenericError>
 }
 
 /// STARTs the bot.
-pub async fn start(options: AppConfig, mut discord: DiscordBot, mut giphy: GiphyBot, mut matrix: MatrixBot) -> Result<(), GenericError>
+pub async fn start(
+    options: AppConfig,
+    mut discord: DiscordBot,
+    mut giphy: GiphyBot,
+    mut matrix: MatrixBot
+) -> Result<(), GenericError>
 {
-   let app_id: String = options.id;
-
-   log::info!("Application: MONITOR");
+   log::info!("THE MONITOR");
+   log::info!("---------------");
    log::info!("Version: v0.1.0");
    log::info!("Support: AUTOMAN-0.0.1");
-   log::info!("Application ID: {}", app_id);
+   log::info!("Identifier: {}", options.id);
 
    log::warn!("---");
    log::warn!("PLEASE NOTE THAT THIS IS A VERY EARLY PRE-RELEASE VERSION OF THE PROGRAM.");

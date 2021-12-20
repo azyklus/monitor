@@ -174,7 +174,7 @@ pub async fn slowmode(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
 
                e
             })
-         }).await;
+         }).await?;
          return Err(e.into());
       } else {
          let _ = msg.channel_id.send_message(&ctx.http, |m| {
@@ -196,7 +196,7 @@ pub async fn slowmode(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
 
                e
             })
-         }).await;
+         }).await?;
       }
    } else if let Some(Channel::Guild(channel)) = msg.channel_id.to_channel_cached(&ctx.cache).await {
       let _ = msg.channel_id.send_message(&ctx.http, |m| {
@@ -218,7 +218,7 @@ pub async fn slowmode(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
 
             e
          })
-      }).await;
+      }).await?;
    } else {
       let _ = msg.channel_id.send_message(&ctx.http, |m| {
          m.embed(|e| {
@@ -239,7 +239,7 @@ pub async fn slowmode(ctx: &Context, msg: &Message, mut args: Args) -> CommandRe
 
             e
          })
-      }).await;
+      }).await?;
    }
 
    return Ok(());
@@ -256,7 +256,7 @@ pub async fn gif(ctx: &Context, msg: &Message) -> CommandResult
 
    let _ = msg.channel_id.send_message(&ctx.http, |m| {
       m.content(&gifs[num].url)
-   }).await;
+   }).await?;
 
    return Ok(());
 }
