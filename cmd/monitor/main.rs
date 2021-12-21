@@ -120,7 +120,8 @@ async fn main() -> Result<(), GenericError>
       .group(&commands::GENERAL_GROUP)
       .group(&commands::CHAT_GROUP)
       .group(&commands::OWNER_GROUP)
-      .group(&commands::GAMES_GROUP);
+      .group(&commands::GAMES_GROUP)
+      .group(&commands::XKCD_GROUP);
 
    let mut discord: DiscordBot = automan::setup_discord(&config.discord, fw).await?;
    let mut giphy: GiphyBot = automan::setup_giphy(&config.gif)?;

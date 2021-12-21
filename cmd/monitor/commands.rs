@@ -16,3 +16,7 @@ pub use general::GENERAL_GROUP;
 /// Owner-specific commands.
 pub mod owner;
 pub use owner::OWNER_GROUP;
+
+/// XKCD comic displays.
+pub mod xkcd;
+pub use xkcd::XKCD_GROUP;
