@@ -14,7 +14,7 @@
 pub struct Xkcd;
 
 /// Represents an Xkcd comic.
-#[derive(Copy, Clone, Debug, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct XkcdComic
 {
     pub month: String,
@@ -45,7 +45,7 @@ pub async fn random(ctx: &Context, msg: &Message) -> CommandResult
             .expect("failed to separate the body of the request");
     
         // Deserialize our received JSON into our comic structure.
-        let comic1: XkcdComic = de::from_str(bod1.as_str()).exepct("failed to deserialize JSON data");
+        let comic1: XkcdComic = de::from_str(bod1.as_str()).expect("failed to deserialize JSON data");
 
         // Generate our number.
         rnd.gen_range(1..=comic1.num) as usize
@@ -54,7 +54,7 @@ pub async fn random(ctx: &Context, msg: &Message) -> CommandResult
     // Send a request to XKCD's JSON web API to get a random comic,
     // using the random number generated above.
     let url2 = format!("https://xkcd.com/{}/info.0.json", num);
-    let bod2 = reqwest::get(url)
+    let bod2 = reqwest::get(url2)
         .await
         .expect("failed to retrieve the comic from XKCD")
         // Separate the body from the rest of the HTTP request.
@@ -65,35 +65,24 @@ pub async fn random(ctx: &Context, msg: &Message) -> CommandResult
     // Deserialize our received JSON data into our comic structure.
     let comic2: XkcdComic = de::from_str(bod2.as_str()).expect("failed to deserialize JSON data");
 
-    // Request the image from XKCD.
-    let image_res = reqwest::get(comic2.img)
+    // Request the image.
+    let image_res = reqwest::get(&comic2.img)
         .await
         .expect("failed to retrieve image from XKCD");
 
     // Create the file.
-    let mut dst: File = {
-        let fname = image_res
-            // Get the URL.
-            .url()
-            // Get path segments.
-            .path_segments()
-            // Get the final segment.
-            .and_then(|seg| seg.last())
-            // Get the name of the file.
-            .and_then(|name| if name.is_empty() { None } else { Some(name) })
-            .unwrap_or("temp.image");
-        
-        File::create(fname).expect("failed to create file")
-    };
-
+    let mut dst = File::create("temp-image").expect("failed to create file");
+    
     // Get the body of the request.
     let content = image_res.text().await.expect("failed to separate body from the request");
     // Save the image.
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
 
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
-        m.add_file(dst);
+        m.add_file("temp-image")
     }).await?;
+
+    fs::remove_file("temp-image").expect("failed to remove the temporary image file");
 
     return Ok(());
 }
@@ -112,35 +101,24 @@ pub async fn latest(ctx: &Context, msg: &Message) -> CommandResult
     // Deserialize our received JSON into our comic structure.
     let comic: XkcdComic = de::from_str(bod.as_str()).expect("failed to deserialize JSON data");
 
-    // Request the image from XKCD.
-    let image_res = reqwest::get(comic.img)
+    // Request the image.
+    let image_res = reqwest::get(&comic.img)
         .await
         .expect("failed to retrieve image from XKCD");
 
     // Create the file.
-    let mut dst: File = {
-        let fname = image_res
-            // Get the URL.
-            .url()
-            // Get path segments.
-            .path_segments()
-            // Get the final segment.
-            .and_then(|seg| seg.last())
-            // Get the name of the file.
-            .and_then(|name| if name.is_empty() { None } else { Some(name) })
-            .unwrap_or("temp.image");
-        
-        File::create(fname).expect("failed to create file")
-    };
-
+    let mut dst = File::create("temp-image").expect("failed to create file");
+    
     // Get the body of the request.
     let content = image_res.text().await.expect("failed to separate body from the request");
     // Save the image.
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
 
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
-        m.add_file(dst);
+        m.add_file("temp-image")
     }).await?;
+
+    fs::remove_file("temp-image").expect("failed to remove the temporary image file");
 
     return Ok(());
 }
@@ -152,7 +130,7 @@ pub async fn latest(ctx: &Context, msg: &Message) -> CommandResult
 ///
 /// - `mntr xkcd select 4` gets `https://xkcd.com/4`
 #[command]
-pub async fn select(ctx: &Context, msg: &Message, args: Args) -> CommandResult
+pub async fn select(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
 {
     let param = args.single::<usize>().expect("expected a single integer");
     
@@ -170,32 +148,23 @@ pub async fn select(ctx: &Context, msg: &Message, args: Args) -> CommandResult
     let comic: XkcdComic = de::from_str(bod.as_str()).expect("failed to serialize JSON data");
 
     // Request the image.
-    let image_res = reqwest::get(comic.img).await.expect("failed to retrieve image from XKCD");
+    let image_res = reqwest::get(&comic.img)
+        .await
+        .expect("failed to retrieve image from XKCD");
 
     // Create the file.
-    let mut dst: File = {
-        let fname = image_res
-            // Get the URL.
-            .url()
-            // Get path segments.
-            .path_segments()
-            // Get the final segment.
-            .and_then(|seg| seg.last())
-            // Get the name of the file.
-            .and_then(|name| if name.is_empty() { None } else { Some(name) })
-            .unwrap_or("temp.image");
-            
-        File::create(fname).expect("failed to create file")
-    };
+    let mut dst = File::create("temp-image").expect("failed to create file");
     
     // Get the body of the request.
     let content = image_res.text().await.expect("failed to separate body from the request");
     // Save the image.
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
-    
+
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
-        m.add_file(dst);
+        m.add_file("temp-image")
     }).await?;
+
+    fs::remove_file("temp-image").expect("failed to remove the temporary image file");
     
     return Ok(());
 }
@@ -209,10 +178,14 @@ use automan::{
 
 use rand::{Rng, RngCore, rngs};
 
+use reqwest::Url;
+
 use std::{
     collections::HashSet,
-    io::{self, File},
+    fs::{self, File},
+    io,
     ops::RangeInclusive,
+    path::Path,
 };
 
 use serde_json::de;
@@ -222,6 +195,7 @@ use serenity::{
        Context,
        bridge::gateway::ShardId,
     },
+    http::AttachmentType,
     framework::standard::{
        Args,
        CommandGroup,

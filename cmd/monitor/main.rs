@@ -124,7 +124,7 @@ async fn main() -> Result<(), GenericError>
       .group(&commands::XKCD_GROUP);
 
    let mut discord: DiscordBot = automan::setup_discord(&config.discord, fw).await?;
-   let mut giphy: GiphyBot = automan::setup_giphy(&config.gif)?;
+   let mut giphy: GiphyBot = automan::setup_giphy(&config.giphy)?;
    let mut matrix: MatrixBot = automan::setup_matrix(&config.matrix)?;
 
    return automan::start(config, discord, giphy, matrix).await;
@@ -172,10 +172,22 @@ use log::LevelFilter;
 
 // CRATE DEPENDENCIES ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-extern crate anyhow;
-extern crate automan;
+extern crate chrono;
+extern crate fern;
+extern crate rand;
+extern crate rillrate;
+extern crate serde;
+extern crate serde_json;
 extern crate serenity;
 extern crate tokio;
+extern crate toml;
+extern crate ulid;
 
 #[macro_use]
 extern crate lazy_static;
+
+#[macro_use]
+extern crate log;
+
+#[macro_use]
+extern crate serde_derive;
