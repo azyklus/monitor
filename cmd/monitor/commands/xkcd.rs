@@ -79,7 +79,17 @@ pub async fn random(ctx: &Context, msg: &Message) -> CommandResult
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
 
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
-        m.add_file("temp-image")
+        m.embed(|e| {
+            e.title("XKCD: Random");
+            e.image("attachment://temp-image");
+            e.timestamp(&Utc::now());
+
+            e
+        });
+
+        m.add_file(AttachmentType::Path(Path::new("./temp-image")));
+
+        m
     }).await?;
 
     fs::remove_file("temp-image").expect("failed to remove the temporary image file");
@@ -115,7 +125,17 @@ pub async fn latest(ctx: &Context, msg: &Message) -> CommandResult
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
 
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
-        m.add_file("temp-image")
+        m.embed(|e| {
+            e.title("XKCD: Latest");
+            e.image("attachment://temp-image");
+            e.timestamp(&Utc::now());
+
+            e
+        });
+
+        m.add_file("temp-image");
+
+        m
     }).await?;
 
     fs::remove_file("temp-image").expect("failed to remove the temporary image file");
@@ -161,7 +181,17 @@ pub async fn select(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
 
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
-        m.add_file("temp-image")
+        m.embed(|e| {
+            e.title("XKCD: Select");
+            e.image("attachment://temp-image");
+            e.timestamp(&Utc::now());
+
+            e
+        });
+
+        m.add_file("temp-image");
+
+        m
     }).await?;
 
     fs::remove_file("temp-image").expect("failed to remove the temporary image file");
@@ -176,9 +206,9 @@ use automan::{
     ShardManagerContainer,
 };
 
-use rand::{Rng, RngCore, rngs};
+use chrono::Utc;
 
-use reqwest::Url;
+use rand::{Rng, RngCore, rngs};
 
 use std::{
     collections::HashSet,
