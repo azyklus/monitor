@@ -1,7 +1,6 @@
 # Added by Shards tool
 
 /docs/
-/lib/
 /bin/
 /.shards/
 *.dwarf

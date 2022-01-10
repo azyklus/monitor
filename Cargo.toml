@@ -8,11 +8,11 @@ edition = "2021"
 
 [[bin]]
 name = "monitor"
-path = "cmd/monitor/main.rs"
+path = "app/monitor/main.rs"
 
 [lib]
 name = "automan"
-path = "src/lib.rs"
+path = "lib/automan.rs"
 
 [dependencies]
 anyhow = "1.0.44"
