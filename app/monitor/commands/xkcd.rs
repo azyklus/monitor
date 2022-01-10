@@ -79,20 +79,22 @@ pub async fn random(ctx: &Context, msg: &Message) -> CommandResult
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
 
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
+        m.add_file(AttachmentType::Path(Path::new("./temp-image")));
+
         m.embed(|e| {
-            e.title("XKCD: Random");
-            e.image("attachment://temp-image");
+            e.title(format!("Random XKCD: {}", &comic2.safe_title));
+            e.description(&comic2.link);
             e.timestamp(&Utc::now());
 
             e
         });
 
-        m.add_file(AttachmentType::Path(Path::new("./temp-image")));
-
         m
     }).await?;
 
-    fs::remove_file("temp-image").expect("failed to remove the temporary image file");
+    tokio::fs::remove_file("temp-image")
+      .await
+      .expect("failed to remove the temporary image file");
 
     return Ok(());
 }
@@ -125,20 +127,22 @@ pub async fn latest(ctx: &Context, msg: &Message) -> CommandResult
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
 
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
+        m.add_file("temp-image");
+
         m.embed(|e| {
-            e.title("XKCD: Latest");
-            e.image("attachment://temp-image");
+            e.title(format!("Latest XKCD: {}", &comic.safe_title));
+            e.description(&comic.link);
             e.timestamp(&Utc::now());
 
             e
         });
 
-        m.add_file("temp-image");
-
         m
     }).await?;
 
-    fs::remove_file("temp-image").expect("failed to remove the temporary image file");
+    tokio::fs::remove_file("temp-image")
+      .await
+      .expect("failed to remove the temporary image file");
 
     return Ok(());
 }
@@ -181,20 +185,22 @@ pub async fn select(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
     io::copy(&mut content.as_bytes(), &mut dst).expect("failed to save image");
 
     let _ = msg.channel_id.send_message(&ctx.http, |m| {
+        m.add_file("temp-image");
+
         m.embed(|e| {
-            e.title("XKCD: Select");
-            e.image("attachment://temp-image");
+            e.title(format!("XKCD: {}", &comic.safe_title));
+            e.description(&comic.link);
             e.timestamp(&Utc::now());
 
             e
         });
 
-        m.add_file("temp-image");
-
         m
     }).await?;
 
-    fs::remove_file("temp-image").expect("failed to remove the temporary image file");
+    tokio::fs::remove_file("temp-image")
+      .await
+      .expect("failed to remove the temporary image file");
     
     return Ok(());
 }
