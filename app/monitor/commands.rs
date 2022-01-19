@@ -1,22 +1,34 @@
-// MODULES //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MODULES ////////////////////////////////////////////////////////////////////////////////////////
 
 /// Chat management commands and functionality.
 pub mod chat;
-pub use chat::CHAT_GROUP;
 
 /// Chat game commands.
 pub mod games;
-pub use games::GAMES_GROUP;
+
+/// Commands that interface with the GIPHY API.
+pub mod giphy;
 
 /// General-use commands.
 pub mod general;
-pub use general::MY_HELP;
-pub use general::GENERAL_GROUP;
 
 /// Owner-specific commands.
 pub mod owner;
-pub use owner::OWNER_GROUP;
 
 /// XKCD comic displays.
 pub mod xkcd;
-pub use xkcd::XKCD_GROUP;
+
+
+// EXPORTS ////////////////////////////////////////////////////////////////////////////////////////
+
+pub use self::{
+   chat::CHAT_GROUP,
+   games::GAMES_GROUP,
+   general::{
+      MY_HELP,
+      GENERAL_GROUP,
+   },
+   giphy::GIPHY_GROUP,
+   owner::OWNER_GROUP,
+   xkcd::XKCD_GROUP,
+};

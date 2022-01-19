@@ -12,7 +12,7 @@ path = "app/monitor/main.rs"
 
 [lib]
 name = "automan"
-path = "lib/automan.rs"
+path = "lib/automan/automan.rs"
 
 [dependencies]
 anyhow = "1.0.44"

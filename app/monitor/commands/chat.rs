@@ -2,10 +2,10 @@
 /// 
 /// This contains commands related directly to various chat usages.
 #[group]
+#[summary="Mostly-simple chat commands."]
 #[commands(
    delete,
    wipe,
-   slowmode,
    gif
 )]
 pub struct Chat;
@@ -134,112 +134,6 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
          m.delete(&ctx.http).await?;
          break;
       }
-   }
-
-   return Ok(());
-}
-
-/// Sets the slow mode rate for the channel in which the command is triggered.
-///
-///
-/// # Examples
-///
-/// `mntr slow 10` > Sets the channel's slow mode rate to `10` seconds.
-/// `mntr freeze 90` > Sets the channel's slow mode rate to `90` seconds.
-#[command]
-#[aliases("slow", "freeze")]
-pub async fn slowmode(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
-{
-   if let Ok(rate) = args.single::<u64>() {
-      if let Err(e) = msg.channel_id.edit(&ctx.http, |c| {
-         c.slow_mode_rate(rate)
-      }).await {
-         log::error!("an error occurred setting channel's slow mode rate");
-         let _ = msg.channel_id.send_message(&ctx.http, |m| {
-            m.embed(|e| {
-               e.title("Error!");
-
-               e.author(|a| {
-                  a.icon_url(&msg.author.avatar_url().unwrap());
-                  a.name("The Monitor");
-
-                  a
-               });
-
-               e.description("Failed to set this channel's slow mode rate.");
-
-               e.footer(|f| {
-                  f.text("Run the help command to see more information about this command.")
-               });
-
-               e
-            })
-         }).await?;
-         return Err(e.into());
-      } else {
-         let _ = msg.channel_id.send_message(&ctx.http, |m| {
-            m.embed(|e| {
-               e.title("Success!");
-
-               e.author(|a| {
-                  a.icon_url(&msg.author.avatar_url().unwrap());
-                  a.name("The Monitor");
-
-                  a
-               });
-
-               e.description(format!("Set this channel's slow mode rate to {} seconds", rate));
-
-               e.footer(|f| {
-                  f.text("Run the help command to see more information about this command.")
-               });
-
-               e
-            })
-         }).await?;
-      }
-   } else if let Some(Channel::Guild(channel)) = msg.channel_id.to_channel_cached(&ctx.cache).await {
-      let _ = msg.channel_id.send_message(&ctx.http, |m| {
-         m.embed(|e| {
-            e.title("Notice!");
-
-            e.author(|a| {
-               a.icon_url(&msg.author.avatar_url().unwrap());
-               a.name("The Monitor");
-
-               a
-            });
-
-            e.description(format!("Current slow mode rate is `{}` seconds.", channel.slow_mode_rate.unwrap_or(0)));
-
-            e.footer(|f| {
-               f.text("Run the help command to see more information about this command.")
-            });
-
-            e
-         })
-      }).await?;
-   } else {
-      let _ = msg.channel_id.send_message(&ctx.http, |m| {
-         m.embed(|e| {
-            e.title("Error!");
-
-            e.author(|a| {
-               a.icon_url(&msg.author.avatar_url().unwrap());
-               a.name("The Monitor");
-
-               a
-            });
-
-            e.description("Failed to find the channel in cache.");
-
-            e.footer(|f| {
-               f.text("Run the help command to see more information about this command.")
-            });
-
-            e
-         })
-      }).await?;
    }
 
    return Ok(());

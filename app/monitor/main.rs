@@ -118,6 +118,7 @@ async fn main() -> Result<(), GenericError>
       .await
       .help(&commands::MY_HELP)
       .group(&commands::GENERAL_GROUP)
+      .group(&commands::GIPHY_GROUP)
       .group(&commands::CHAT_GROUP)
       .group(&commands::OWNER_GROUP)
       .group(&commands::GAMES_GROUP)
