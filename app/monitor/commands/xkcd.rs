@@ -10,7 +10,8 @@
 /// A `search` command has not yet been implemented but may be at some point in the future.
 /// Right now, the three base commands are the most important for the Xkcd group.
 #[group]
-#[prefixes("xkcd", "x")]
+#[prefixes("xkcd")]
+#[summary="Commands for getting XKCD comics."]
 #[commands(latest, random, select)]
 pub struct Xkcd;
 

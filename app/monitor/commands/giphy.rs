@@ -1,8 +1,8 @@
 /// A group for commands related to the GIPHY API.
 #[group]
-#[prefixes("gif", "giphy", "g")]
+#[prefixes("gif", "giphy")]
 #[summary="A group of GIPHY-related commands."]
-#[commands(trending)]
+#[commands(trending, random)]
 pub struct Giphy;
 
 

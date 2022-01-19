@@ -2,6 +2,7 @@
 #[group]
 #[owners_only]
 #[only_in(guilds)]
+#[summary="Owner-specific commands."]
 #[commands(slowmode, stop)]
 pub struct Owner;
 

@@ -75,14 +75,12 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
       return Err(e.into());
    }
 
-   let mut m: Message = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
-   let mut d: Duration = Duration::seconds(100);
-   loop {
-      let d2: Duration = Duration::seconds(1);
-      if !d.is_zero() {
-         d = d.checked_sub(&d2).unwrap();
-         continue;
-      } else {
+   let m: Message = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
+   for i in 0..1000 {
+      if i == 1000 {
+         // Delete the confirmation message that we sent.
+         // Should not return an Err, so we may safely discard
+         // the result of the function call.
          m.delete(&ctx.http).await?;
          break;
       }
@@ -123,14 +121,13 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
       return Err(e.into());
    }
 
-   let mut m: Message = msg.reply(&ctx.http, "Successfully deleted 100 messages!").await?;
-   let mut d: Duration = Duration::seconds(100);
-   loop {
-      let d2: Duration = Duration::seconds(1);
-      if !d.is_zero() {
-         d = d.checked_sub(&d2).unwrap();
-         continue;
-      } else {
+   let m: Message = msg.reply(&ctx.http, "Successfully deleted 100 messages!").await?;
+
+   for i in 0..1000 {
+      if i == 1000 {
+         // Delete the confirmation message that we sent.
+         // Should not return an Err, so we may safely discard
+         // the result of the function call.
          m.delete(&ctx.http).await?;
          break;
       }
