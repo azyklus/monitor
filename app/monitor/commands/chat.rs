@@ -157,44 +157,30 @@ pub async fn gif(ctx: &Context, msg: &Message) -> CommandResult
 
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-use crate::{
-   GIPHY,
-};
-
-use automan::{
-   ShardManagerContainer,
-   gif::GiphyBot,
-};
+use crate::GIPHY;
 
 use chrono::Duration;
 
 use giphy::v1::Gif;
 
-use rand::{rngs, Rng, RngCore};
+use rand::{rngs, Rng};
 
-use std::{
-   collections::HashSet,
-   ops::RangeInclusive,
-};
+use std::ops::RangeInclusive;
 
 use serenity::{
    client::{
       Context,
-      bridge::gateway::ShardId,
    },
    framework::standard::{
       Args,
-      CommandGroup,
       CommandResult,
-      help_commands,
       macros::{
          command,
          group,
       },
    },
    model::{
-      channel::{Channel, Message},
-      prelude::{MessageId, UserId},
+      channel::{Message},
+      prelude::{MessageId},
    },
-   prelude::*,
 };

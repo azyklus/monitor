@@ -47,45 +47,22 @@ pub async fn trending(ctx: &Context, msg: &Message) -> CommandResult
 
 use crate::GIPHY;
 
-use automan::{
-    ShardManagerContainer,
-};
-
-use chrono::Utc;
-
 use giphy::v1::Gif;
 
-use rand::{Rng, RngCore, rngs};
-
-use std::{
-    collections::HashSet,
-    fs::{self, File},
-    io,
-    ops::RangeInclusive,
-    path::Path,
-};
-
-use serde_json::de;
+use rand::{Rng, rngs};
 
 use serenity::{
     client::{
        Context,
-       bridge::gateway::ShardId,
     },
-    http::AttachmentType,
     framework::standard::{
-       Args,
-       CommandGroup,
        CommandResult,
-       help_commands,
        macros::{
           command,
           group,
        },
     },
     model::{
-       channel::{Channel, Message},
-       prelude::{MessageId, UserId},
+       channel::{Message},
     },
-    prelude::*,
 };

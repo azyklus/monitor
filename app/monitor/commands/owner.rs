@@ -14,18 +14,16 @@ pub async fn stop(ctx: &Context, msg: &Message) -> CommandResult
 {
    let data = ctx.data.read().await;
 
-   if let Some(mngr) = data.get::<ShardManagerContainer>() {
+   return if let Some(mngr) = data.get::<ShardManagerContainer>() {
       msg.reply(ctx, "Shutting down!").await?;
       mngr.lock().await.shutdown_all().await;
 
-      return Ok(());
+      Ok(())
    } else {
       msg.reply(ctx, "There was a problem getting the shard manager").await?;
 
-      return Ok(());
-   }
-
-   return Ok(());
+      Ok(())
+   };
 }
 
 /// Sets the slow mode rate for the channel in which the command is triggered.
@@ -156,13 +154,10 @@ use automan::ShardManagerContainer;
 use serenity::{
    client::{
       Context,
-      bridge::gateway::ShardId,
    },
    framework::standard::{
       Args,
-      CommandGroup,
       CommandResult,
-      help_commands,
       macros::{
          command,
          group,
@@ -170,7 +165,5 @@ use serenity::{
    },
    model::{
       channel::{Channel, Message},
-      prelude::{MessageId, UserId},
    },
-   prelude::*,
 };

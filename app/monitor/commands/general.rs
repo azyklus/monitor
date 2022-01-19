@@ -78,6 +78,9 @@ pub async fn my_help(
    return Ok(());
 }
 
+
+// IMPORTS ////////////////////////////////////////////////////////////////////////////////////////
+
 use automan::ShardManagerContainer;
 
 use std::collections::HashSet;
@@ -104,4 +107,3 @@ use serenity::{
       prelude::UserId,
    },
 };
-

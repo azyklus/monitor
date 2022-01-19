@@ -18,16 +18,16 @@ pub struct Xkcd;
 #[derive(Debug, Deserialize)]
 pub struct XkcdComic
 {
-    pub month: String,
-    pub num: usize,
-    pub link: String,
-    pub year: String,
-    pub news: String,
-    pub safe_title: String,
-    pub alt: String,
-    pub img: String,
-    pub title: String,
-    pub day: String,
+   pub month: String,
+   pub num: usize,
+   pub link: String,
+   pub year: String,
+   pub news: String,
+   pub safe_title: String,
+   pub alt: String,
+   pub img: String,
+   pub title: String,
+   pub day: String,
 }
 
 /// Gets a random comic from Xkcd.
@@ -35,7 +35,7 @@ pub struct XkcdComic
 pub async fn random(ctx: &Context, msg: &Message) -> CommandResult
 {
    let mut rnd = rngs::OsRng;
-   let mut num: usize = {
+   let num: usize = {
       // Send a request to XKCD's JSON web API to get the latest comic.
       let bod1 = reqwest::get("https://xkcd.com/info.0.json")
          .await
@@ -128,49 +128,29 @@ pub async fn select(ctx: &Context, msg: &Message, mut args: Args) -> CommandResu
       m.content(&comic.img)
    }).await?;
 
-    return Ok(());
+   return Ok(());
 }
 
 
 // IMPORTS ////////////////////////////////////////////////////////////////////////////////////////
 
-use automan::{
-    ShardManagerContainer,
-};
-
-use chrono::Utc;
-
-use rand::{Rng, RngCore, rngs};
-
-use std::{
-    collections::HashSet,
-    fs::{self, File},
-    io,
-    ops::RangeInclusive,
-    path::Path,
-};
+use rand::{Rng, rngs};
 
 use serde_json::de;
 
 use serenity::{
-    client::{
-       Context,
-       bridge::gateway::ShardId,
-    },
-    http::AttachmentType,
-    framework::standard::{
-       Args,
-       CommandGroup,
-       CommandResult,
-       help_commands,
-       macros::{
-          command,
-          group,
-       },
-    },
-    model::{
-       channel::{Channel, Message},
-       prelude::{MessageId, UserId},
-    },
-    prelude::*,
+   client::{
+      Context,
+   },
+   framework::standard::{
+      Args,
+      CommandResult,
+      macros::{
+         command,
+         group,
+      },
+   },
+   model::{
+      channel::{Message},
+   },
 };

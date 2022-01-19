@@ -11,7 +11,6 @@
 #![crate_name = "monitor"]
 #![crate_type = "bin"]
 #![deny(clippy::all)]
-#![allow(unused)]
 #![allow(clippy::needless_return)]
 #![feature(exclusive_range_pattern)]
 
@@ -124,9 +123,9 @@ async fn main() -> Result<(), GenericError>
       .group(&commands::GAMES_GROUP)
       .group(&commands::XKCD_GROUP);
 
-   let mut discord: DiscordBot = automan::setup_discord(&config.discord, fw).await?;
-   let mut giphy: GiphyBot = automan::setup_giphy(&config.giphy)?;
-   let mut matrix: MatrixBot = automan::setup_matrix(&config.matrix)?;
+   let discord: DiscordBot = automan::setup_discord(&config.discord, fw).await?;
+   let giphy: GiphyBot = automan::setup_giphy(&config.giphy)?;
+   let matrix: MatrixBot = automan::setup_matrix(&config.matrix)?;
 
    return automan::start(config, discord, giphy, matrix).await;
 }
@@ -144,30 +143,20 @@ pub mod commands;
 use automan::{
    discord::{hooks, DiscordBot},
    errors::GenericError,
-   gif::{config::GiphyConfig, GiphyBot},
+   gif::GiphyBot,
    matrix::MatrixBot,
    shared::*,
-   CommandCounter,
 };
 
 use serenity::{
-   client::{
-      bridge::gateway::{GatewayIntents, ShardId, ShardManager},
-      Client,
-   },
    framework::standard::{
-      buckets::{LimitedFor, RevertBucket},
-      macros::hook,
-      CommandResult,
-      DispatchError,
+      buckets::LimitedFor,
       StandardFramework
    },
    http::Http,
-   model::{channel::Message, prelude::UserId},
-   prelude::*,
 };
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use log::LevelFilter;
 
@@ -175,6 +164,7 @@ use log::LevelFilter;
 
 extern crate chrono;
 extern crate fern;
+extern crate log;
 extern crate rand;
 extern crate rillrate;
 extern crate serde;
@@ -186,9 +176,6 @@ extern crate ulid;
 
 #[macro_use]
 extern crate lazy_static;
-
-#[macro_use]
-extern crate log;
 
 #[macro_use]
 extern crate serde_derive;
