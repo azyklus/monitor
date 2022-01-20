@@ -2,9 +2,40 @@
 #[group]
 #[prefixes("giphy")]
 #[summary="Get GIFs from GIPHY."]
-#[commands(trending, random)]
+#[commands(trending, random, search)]
 pub struct Giphy;
 
+
+/// Search for GIFs.
+#[command]
+pub async fn search(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult
+{
+   let mut rnd = rngs::OsRng;
+   let num = rnd.gen_range(1..=25) as usize;
+
+   let text: String   = args.single().expect("expected a string");
+   let gifs: Vec<Gif> = (&GIPHY).search(text.as_str()).await.expect("failed to retrieve GIFs");
+
+   // Send a message in the channel where the command was sent.
+   // This function should never Err, so we may safely discard
+   // the result of the call.
+   let _ = msg.channel_id.send_message(&ctx.http, |m| {
+      m.content(&gifs[num].url)
+   }).await?;
+
+   //   for i in 0..=i32::MAX {
+   //      if i == i32::MAX {
+   //         msg.delete(&ctx.http).await.expect("failed to delete message");
+   //         break;
+   //      } else {
+   //         continue;
+   //      }
+   //   }
+   //
+   // THE ABOVE CODE IS RETARDED.
+
+   return Ok(());
+}
 
 /// Gets a random GIF and sends it in a Discord message.
 #[command]
@@ -52,17 +83,18 @@ use giphy::v1::Gif;
 use rand::{Rng, rngs};
 
 use serenity::{
-    client::{
-       Context,
-    },
-    framework::standard::{
-       CommandResult,
-       macros::{
-          command,
-          group,
-       },
-    },
-    model::{
-       channel::{Message},
-    },
+   client::{
+      Context,
+   },
+   framework::standard::{
+      Args,
+      CommandResult,
+      macros::{
+         command,
+         group,
+      },
+   },
+   model::{
+      channel::{Message},
+   },
 };

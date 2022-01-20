@@ -1,7 +1,7 @@
 #[group]
-#[prefixes("twit", "twtr", "twitter", "tw")]
+#[prefixes("twitter", "tw")]
 #[summary="Do stuff with Twitter."]
-#[commands(tweets)]
+#[commands(auth, tweets)]
 pub struct Twitter;
 
 

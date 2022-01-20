@@ -75,16 +75,7 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
       return Err(e.into());
    }
 
-   let m: Message = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
-   for i in 0..1000 {
-      if i == 1000 {
-         // Delete the confirmation message that we sent.
-         // Should not return an Err, so we may safely discard
-         // the result of the function call.
-         m.delete(&ctx.http).await?;
-         break;
-      }
-   }
+   let _ = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
 
    return Ok(());
 }
@@ -121,17 +112,7 @@ pub async fn wipe(ctx: &Context, msg: &Message) -> CommandResult
       return Err(e.into());
    }
 
-   let m: Message = msg.reply(&ctx.http, "Successfully deleted 100 messages!").await?;
-
-   for i in 0..1000 {
-      if i == 1000 {
-         // Delete the confirmation message that we sent.
-         // Should not return an Err, so we may safely discard
-         // the result of the function call.
-         m.delete(&ctx.http).await?;
-         break;
-      }
-   }
+   let _ = msg.reply(&ctx.http, "Successfully deleted 100 messages!").await?;
 
    return Ok(());
 }
