@@ -28,6 +28,7 @@ lazy_static! {
    pub static ref GIPHY: GiphyBot = GiphyBot::new(&CONFIG.giphy).unwrap();
 }
 
+
 #[doc(hidden)]
 #[tokio::main]
 async fn main() -> Result<(), GenericError>
@@ -133,13 +134,15 @@ async fn main() -> Result<(), GenericError>
    return automan::start(config, discord, giphy, matrix).await;
 }
 
+
 // MODULES //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /// Contains bot commands called on Discord or Matrix.
-///
-/// Commands are prefixed with `mntr` and can be enumerated via
-/// the `mntr help` command.
 pub mod commands;
+
+/// Functionality related to the web-based dashboard.
+pub mod dash;
+
 
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
