@@ -1,8 +1,22 @@
 #[group]
-#[commands(ping)]
+#[summary="Base commands, available to everyone."]
+#[commands(ping, version)]
 pub struct General;
 
-/// Shows the latency of the bot (in milliseconds).
+
+/// Responds with version and usage information of the program.
+#[command]
+pub async fn version(ctx: &Context, msg: &Message) -> CommandResult
+{
+   // Reply to the message that triggered the command.
+   // This should never return an Err, so we can safely discard the result
+   // of this function call.
+   msg.reply(ctx, format!("The application's version is {}", (&CONFIG).version)).await?;
+
+   return Ok(());
+}
+
+/// Shows the latency of the bot in milliseconds.
 #[command]
 #[aliases("latency", "pong")]
 pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult
@@ -80,6 +94,8 @@ pub async fn my_help(
 
 
 // IMPORTS ////////////////////////////////////////////////////////////////////////////////////////
+
+use crate::CONFIG;
 
 use automan::ShardManagerContainer;
 

@@ -3,6 +3,12 @@
 /// Chat management commands and functionality.
 pub mod chat;
 
+/// Commands for managing configuration details of the app.
+pub mod config;
+
+/// Commands for general amusement.
+pub mod fun;
+
 /// Chat game commands.
 pub mod games;
 
@@ -15,6 +21,9 @@ pub mod general;
 /// Owner-specific commands.
 pub mod owner;
 
+/// Commands for interacting with Twitter.
+pub mod twitter;
+
 /// XKCD comic displays.
 pub mod xkcd;
 
@@ -23,6 +32,8 @@ pub mod xkcd;
 
 pub use self::{
    chat::CHAT_GROUP,
+   config::CONFIG_GROUP,
+   fun::FUN_GROUP,
    games::GAMES_GROUP,
    general::{
       MY_HELP,
@@ -30,5 +41,6 @@ pub use self::{
    },
    giphy::GIPHY_GROUP,
    owner::OWNER_GROUP,
+   twitter::TWITTER_GROUP,
    xkcd::XKCD_GROUP,
 };

@@ -1,4 +1,4 @@
 token = 'Bot <TOKEN>'
 large_threshold = 20
 message_cache_size = 2000
-identifier = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+id = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'

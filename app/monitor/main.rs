@@ -119,8 +119,11 @@ async fn main() -> Result<(), GenericError>
       .group(&commands::GENERAL_GROUP)
       .group(&commands::GIPHY_GROUP)
       .group(&commands::CHAT_GROUP)
+      .group(&commands::CONFIG_GROUP)
+      .group(&commands::FUN_GROUP)
       .group(&commands::OWNER_GROUP)
       .group(&commands::GAMES_GROUP)
+      .group(&commands::TWITTER_GROUP)
       .group(&commands::XKCD_GROUP);
 
    let discord: DiscordBot = automan::setup_discord(&config.discord, fw).await?;

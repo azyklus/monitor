@@ -16,6 +16,9 @@ pub struct AppConfig
    /// The *APPLICATION'S* unique identifier.
    pub id: String,
 
+   /// The bot's version.
+   pub version: String,
+
    /// Discord-specific configuration details.
    pub discord: DiscordConfig,
 
@@ -32,9 +35,9 @@ impl AppConfig
    pub const PATH: &'static str = "config/app.toml";
 
    /// Creates a new instance of the `AppConfig`.
-   pub fn new(id: String, discord: DiscordConfig, giphy: GiphyConfig, matrix: MatrixConfig) -> AppConfig
+   pub fn new(id: String, version: String, discord: DiscordConfig, giphy: GiphyConfig, matrix: MatrixConfig) -> AppConfig
    {
-      return AppConfig { id, discord, giphy, matrix };
+      return AppConfig { id, version, discord, giphy, matrix };
    }
 
    /// Saves the app configuration to a file located at [`AppConfig::PATH`].
@@ -180,12 +183,15 @@ impl Default for AppConfig
       let dt: DateTime<Utc> = DateTime::from_utc(NaiveDateTime::from_timestamp(ue, 0), Utc);
       let ulid: Ulid = Ulid::from_datetime(dt);
 
+      let version = env!("CARGO_PKG_VERSION");
+
       let discord: DiscordConfig = DiscordConfig::default();
       let giphy: GiphyConfig = GiphyConfig::default();
       let matrix: MatrixConfig = MatrixConfig::default();
 
       return AppConfig {
          id: ulid.to_string(),
+         version: version.to_string(),
          discord,
          giphy,
          matrix,
