@@ -33,23 +33,24 @@ lazy_static! {
 #[tokio::main]
 async fn main() -> Result<(), GenericError>
 {
-   if let Err(e) = automan::setup_logging(LevelFilter::Debug, ".logfile") {
+   if let Err(e) = automan::setup_logging(LevelFilter::Info, ".logfile") {
       return Err(e.into());
    }
 
    let config = CONFIG.clone();
-
    let http = Http::new_with_token(&config.discord.token);
 
    // We will fetch your bot's owners and id
    let (owners, bot_id) = match http.get_current_application_info().await {
       Ok(info) => {
          let mut owners = HashSet::new();
+
          if let Some(team) = info.team {
             owners.insert(team.owner_user_id);
          } else {
             owners.insert(info.owner.id);
          }
+
          match http.get_current_user().await {
             Ok(bot_id) => (owners, bot_id.id),
             Err(why) => panic!("Could not access the bot id: {:?}", why),
