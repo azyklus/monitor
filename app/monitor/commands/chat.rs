@@ -52,7 +52,7 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
 
             e
          })
-      }).await;
+      }).await?;
    }
 
    let msgs = msg.channel_id.messages(&ctx.http, |r| {
@@ -75,7 +75,7 @@ pub async fn delete(ctx: &Context, msg: &Message, args: Args) -> CommandResult
       return Err(e.into());
    }
 
-   let _ = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
+   let m = msg.reply(&ctx.http, format!("Successfully deleted {} messages!", msg_ids.len())).await?;
 
    return Ok(());
 }
@@ -137,13 +137,14 @@ pub async fn gif(ctx: &Context, msg: &Message) -> CommandResult
 
 use crate::GIPHY;
 
-use chrono::Duration;
-
 use giphy::v1::Gif;
 
 use rand::{rngs, Rng};
 
-use std::ops::RangeInclusive;
+use std::{
+   ops::RangeInclusive,
+   time::Duration,
+};
 
 use serenity::{
    client::{

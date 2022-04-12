@@ -11,6 +11,7 @@
 #![crate_name = "monitor"]
 #![crate_type = "bin"]
 #![deny(clippy::all)]
+#![warn(missing_docs)]
 #![allow(clippy::needless_return)]
 #![feature(exclusive_range_pattern)]
 
@@ -33,9 +34,23 @@ lazy_static! {
 #[tokio::main]
 async fn main() -> Result<(), GenericError>
 {
-   if let Err(e) = automan::setup_logging(LevelFilter::Info, ".logfile") {
+   if let Err(e) = Dispatch::new()
+      .format(|out, message, record| {
+         out.finish(format_args!(
+            "{}[{}][{}] {}",
+            Utc::now().format("[%Y-%m-%d] [%HH:%Mm:%Ss]"),
+            record.target(),
+            record.level(),
+            message,
+         ))
+      })
+      .level(level)
+      .chain(std::io::stdout())
+      .chain(fern::log_file(logfile)?)
+      .apply() {
       return Err(e.into());
    }
+
 
    let config = CONFIG.clone();
    let http = Http::new_with_token(&config.discord.token);
@@ -59,6 +74,7 @@ async fn main() -> Result<(), GenericError>
       Err(why) => panic!("Could not access application info: {:?}", why),
    };
 
+   // Configure Serenity's standard framework.
    let fw = StandardFramework::new()
       .configure(|c| {
          c
@@ -105,7 +121,8 @@ async fn main() -> Result<(), GenericError>
       // Optionally `await_ratelimits` will delay until the command can be executed instead of
       // cancelling the command invocation.
       .bucket("complicated", |b| {
-         b.limit(2)
+         b
+            .limit(2)
             .time_span(30)
             .delay(5)
             // The target each bucket will apply to.
@@ -128,7 +145,7 @@ async fn main() -> Result<(), GenericError>
       .group(&commands::TWITTER_GROUP)
       .group(&commands::XKCD_GROUP);
 
-   let discord: DiscordBot = automan::setup_discord(&config.discord, fw).await?;
+   let discord: DiscordBot = { automan::setup_discord(&config.discord, fw).await? };
    let giphy: GiphyBot = automan::setup_giphy(&config.giphy)?;
    let matrix: MatrixBot = automan::setup_matrix(&config.matrix)?;
 
@@ -136,13 +153,98 @@ async fn main() -> Result<(), GenericError>
 }
 
 
+/// The maximum number of threads allowed to remain activate at once.
+pub const MAX_THREADS: usize = 3;
+
+/// An asynchronous event handler.
+///
+/// An instance of our `Handler` will watch for events defined in the [`EventHandler`] trait impl.
+///
+/// `guild_member_addition` is an event triggered when a [`User`] joins a [`Guild`] that the bot is
+/// party to. When this event is triggered, a message is sent to the first channel in the guild welcoming
+/// the user and the user receives a welcome DM with instructions on how best to proceed.
+///
+/// `ready` is triggered when the bot finishes connecting to the Discord gateway.
+///
+/// [`EventHandler`]: serenity::client::EventHandler
+/// [`User`]: serenity::model::user::User
+/// [`Guild`]: serenity::model::guild::Guild
+pub struct Handler;
+
+#[async_trait]
+impl EventHandler for Handler
+{
+   async fn guild_member_addition(&self, ctx: Context, guild_id: GuildId, member: Member)
+   {
+      let mut channels: Vec<ChannelId> = vec![];
+      let http = ctx.http.clone();
+
+      for channel in http.as_ref().get_channels(guild_id.0).await.unwrap() {
+         channels.push(channel.id);
+      }
+
+      member.user.dm(&ctx.http, |m| {
+         m.embed(|mut e| {
+            e.title("Welcome aboard!");
+            e.description("You have successfully joined the Narwhals fan server!");
+
+            e
+         })
+      }).await.unwrap();
+
+      channels[0].send_message(&ctx.http, |m| {
+         m.embed(|mut e| {
+            e.title("Welcome!");
+            e.description(&format!("Please welcome @{}#{} to the server!", member.user.name, member.user.id));
+
+            e
+         })
+      }).await.unwrap();
+
+      log::info!("{} joined the guild at {:?}.", member.user.name, member.joined_at);
+   }
+
+   async fn ready(&self, _: Context, ready: Ready)
+   {
+      log::info!("{} is connected!", ready.user.name);
+   }
+}
+
+#[doc(hidden)]
+pub struct CommandCounter;
+
+impl TypeMapKey for CommandCounter
+{
+   type Value = HashMap<String, u64>;
+}
+
+/// A container type is created for inserting into our [`Client`]'s data,
+/// which allows for data to be accessible across all events and framework commands,
+/// or anywhere else that has a copy of the data [`Arc`].
+///
+/// [`Client`]: serenity::client::Client
+/// [`Arc`]: std::sync::Arc
+pub struct ShardManagerContainer;
+
+impl TypeMapKey for ShardManagerContainer
+{
+   type Value = Arc<Mutex<ShardManager>>;
+}
+
+
 // MODULES //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// `Bot` is implemented here.
+pub mod bot;
 
 /// Contains bot commands called on Discord or Matrix.
 pub mod commands;
 
-/// Functionality related to the web-based dashboard.
-pub mod dash;
+/// Serenity API hooks.
+pub mod hooks;
+
+/// Application services for handling tasks automatically.
+pub mod services;
 
 
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,16 +258,32 @@ use automan::{
 };
 
 use serenity::{
+   async_trait,
+   client::EventHandler,
    framework::standard::{
       buckets::LimitedFor,
-      StandardFramework
+      StandardFramework,
    },
    http::Http,
+   model::{
+      gateway::Ready,
+      guild::Member,
+      id::{ChannelId, GuildId},
+   },
+   prelude::*,
 };
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
+use std::error::Error;
+use tokio::task::JoinHandle;
+
+use chrono::Utc;
+use fern::Dispatch;
 use log::LevelFilter;
+
+use ulid::Ulid;
+
 
 // CRATE DEPENDENCIES ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

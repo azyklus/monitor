@@ -62,7 +62,7 @@ impl EventHandler for Handler
       channels[0].send_message(&ctx.http, |m| {
          m.embed(|mut e| {
             e.title("Welcome!");
-            e.description(&format!("@everyone, please welcome @{}#{} to the server!", member.user.name, member.user.id));
+            e.description(&format!("Please welcome @{}#{} to the server!", member.user.name, member.user.id));
 
             e
          })
