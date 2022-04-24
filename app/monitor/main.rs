@@ -44,10 +44,11 @@ async fn main() -> Result<(), GenericError>
             message,
          ))
       })
-      .level(level)
+      .level(if cfg!(debug) { LevelFilter::Debug } else { LevelFilter::Warn })
       .chain(std::io::stdout())
-      .chain(fern::log_file(logfile)?)
-      .apply() {
+      .chain(fern::log_file(".logfile")?)
+      .apply()
+   {
       return Err(e.into());
    }
 
@@ -186,7 +187,7 @@ impl EventHandler for Handler
       member.user.dm(&ctx.http, |m| {
          m.embed(|mut e| {
             e.title("Welcome aboard!");
-            e.description("You have successfully joined the Narwhals fan server!");
+            e.description("You have successfully joined the TWO community!");
 
             e
          })
@@ -250,7 +251,7 @@ pub mod services;
 // IMPORTS //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 use automan::{
-   discord::{hooks, DiscordBot},
+   discord::{DiscordBot},
    errors::GenericError,
    gif::GiphyBot,
    matrix::MatrixBot,
@@ -259,7 +260,14 @@ use automan::{
 
 use serenity::{
    async_trait,
-   client::EventHandler,
+   client::{
+      EventHandler,
+      bridge::gateway::{
+         GatewayIntents,
+         ShardManager,
+         ShardId,
+      },
+   },
    framework::standard::{
       buckets::LimitedFor,
       StandardFramework,
@@ -273,9 +281,12 @@ use serenity::{
    prelude::*,
 };
 
-use std::collections::{HashMap, HashSet};
+use std::{
+   collections::{HashMap, HashSet},
+   error::Error,
+   sync::Arc,
+};
 
-use std::error::Error;
 use tokio::task::JoinHandle;
 
 use chrono::Utc;
